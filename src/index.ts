@@ -116,9 +116,17 @@ export class Client {
     public getRequest (path: string) {
         return this.request(path);
     }
-    
+
     public artist(id: string) {
         return this.request(`artists/${id}`);
+    }
+
+    public user(id: string) {
+        return this.request(`users/${id}`);
+    }
+
+    public collection(id: string) {
+        return this.request(`users/${id}/collection`);
     }
 }
 export default Client;

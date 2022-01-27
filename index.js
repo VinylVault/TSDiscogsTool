@@ -5,7 +5,11 @@ console.log("Bollocks, This Works, I'm A Software Engineer!");
 const main = async () => {
   const discogs = new Discogs({});
   const data = await discogs.artist("72872");
+  const user = await discogs.user("DexVinyl");
+  const collection = await discogs.collection("DexVinyl");
   console.log(data.data);
+  console.log(user.data);
+  console.log(collection.data);
   console.log(discogs.getRatelimit());
 };
 
