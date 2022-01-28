@@ -6,9 +6,9 @@ Dotenv.config();
 
 const debug = Debug('discog:info');
 
-Debug('Welcome To The Last Discogs API v2 Library You Will Ever Need')
-Debug('(c) Dex Vinyl & Mike Elsmore 2022')
-Debug('Released under MIT License')
+debug('Welcome To The Last Discogs API v2 Library You Will Ever Need')
+debug('(c) Dex Vinyl & Mike Elsmore 2022')
+debug('Released under MIT License')
 
 interface Ratelimit {
     ratelimit: number,
@@ -73,8 +73,8 @@ export class Client {
         let authString;
         if (token || process.env.DISCOGS_API_TOKEN) {
             authString = `token=${(token || process.env.DISCOGS_API_TOKEN)}`;
-        } else if (key && secret) {
-            authString = `key=${key}, secret=${secret}`;
+        } else if ((key || process.env.DISCOGS_API_KEY) && (secret || process.env.DISCOGS_API_SECRET)) {
+            authString = `key=${(key || process.env.DISCOGS_API_KEY)}, secret=${(secret || process.env.DISCOGS_API_SECRET)}`;
         }
         return authString || null;
     }
@@ -117,16 +117,31 @@ export class Client {
         return this.request(path);
     }
 
-    public artist(id: string) {
+    public getArtist(id: string) {
         return this.request(`artists/${id}`);
     }
 
-    public user(id: string) {
+    public getUser(id: string) {
         return this.request(`users/${id}`);
     }
-
-    public collection(id: string) {
+    public getUserCollection(id: string) {
         return this.request(`users/${id}/collection`);
+    }
+    public getUserWantlist(id: string) {
+        return this.request(`users/${id}/wants`);
+    }
+    public getUserFolders(id: string) {
+        return this.request(`users/${id}/collection/folders`);
+    }
+    public getUserFolderContents(id: string, folder:string) {
+        return this.request(`users/${id}/collection/folders/${folder}/releases`);
+    }
+    public getUserCollectionValue(id: string) {
+        return this.request(`users/${id}/collection/value`);
+    }
+
+    public getRelease(id: string) {
+        return this.request(`users/${id}/collection/folders`);
     }
 }
 export default Client;
