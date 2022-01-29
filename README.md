@@ -25,27 +25,39 @@ Discogs Personal Access Key should be set in .env file
 USER INFORMATION
 
 `const user = await discogs.getUser();`
+
 `const collection = await discogs.getUserCollection();`
+
 `const wantlist = await discogs.getUserWantlist();`
+
 `const folders = await discogs.getUserFolders();`
+
 `const folderContents = await discogs.getUserFolderContents("1841753");`
+
 `const collectionValue = await discogs.getUserCollectionValue();`
 
 RELEASE INFORMATION
 
 `const releaseDetails = await discogs.getRelease("249504");` //RICK-ROLL
+
 `const releaseUserRating = await discogs.getReleaseUserRating("249504");`
+
 `const releaseCommunityRating = await discogs.getReleaseCommunityRating( "8749543" );`
+
 `const releaseStats = await discogs.getReleaseStats("249504");`
+
 `const releaseMaster = await discogs.getMasterRelease("96559");`
+
 `const releaseMasterVersions = await discogs.getMasterReleaseVersions("96559");`
 
 ARTIST INFORMATION
 
 `const artist = await discogs.getArtist("72872");` //RICK ASTLEY
+
 `const artistReleases = await discogs.getArtistReleases("72872");`
 
 LABEL INFORMATION
 
 `const label = await discogs.getLabel("895");` //RCA
+
 `const labelReleases = await discogs.getLabelReleases("895");`
