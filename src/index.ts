@@ -4,11 +4,11 @@ import Fetch from 'node-fetch';
 
 Dotenv.config();
 
-const debug = Debug('discog:info');
+const debug = Debug('discogs:info');
 
-debug('Welcome To The Last Discogs API v2 Library You Will Ever Need')
-debug('(c) Dex Vinyl & Mike Elsmore 2022')
-debug('Released under MIT License')
+console.info('Welcome To The Last Discogs API v2 Library You Will Ever Need')
+console.info('(c) Dex Vinyl & Mike Elsmore 2022')
+console.info('Released under MIT License')
 
 interface Ratelimit {
     ratelimit: number,
@@ -23,6 +23,7 @@ export class Client {
     private userAgent: string;
     private auth: string|null;
     private ratelimit: Ratelimit;
+    private discogsUserName: string;
 
     private defaults = {
         host: 'api.discogs.com',
@@ -32,7 +33,8 @@ export class Client {
         outputFormat: 'discogs',    // Possible values: 'discogs' / 'plaintext' / 'html'
         requestLimit: 25,           // Maximum number of requests to the Discogs API per interval
         requestLimitAuth: 60,       // Maximum number of requests to the Discogs API per interval when authenticated
-        requestLimitInterval: 60000 // Request interval in milliseconds
+        requestLimitInterval: 60000, // Request interval in milliseconds
+        discogsUserName:' ', // Default Username can only be set in ENV file
     }
 
     constructor({
@@ -42,6 +44,7 @@ export class Client {
         token,
         key,
         secret,
+        discogsUserName,
     }: {
         host?: string,
         port?: number;
@@ -49,7 +52,9 @@ export class Client {
         token?: string,
         key?: string,
         secret?: string,
+        discogsUserName?: string,
     }) {
+        this.discogsUserName = process.env.DISCOGS_USER_NAME || this.defaults.discogsUserName;
         this.host = host || this.defaults.host;
         this.port = port || this.defaults.port;
         this.userAgent = userAgent || this.defaults.userAgent;
@@ -58,8 +63,10 @@ export class Client {
             ratelimit: 25,
             remaining: 25,
             used: 0,
-        }
+        };
     }
+
+    
 
     private createAuthString({
         token,
@@ -117,31 +124,74 @@ export class Client {
         return this.request(path);
     }
 
-    public getArtist(id: string) {
-        return this.request(`artists/${id}`);
+   
+//
+// USER SPECIFIC ENDPOINTS
+// 
+    public getUser() {
+        return this.request(`users/${this.discogsUserName}`);
+    }
+    public getUserCollection() {
+        return this.request(`users/${this.discogsUserName}/collection`);
+    }
+    public getUserWantlist() {
+        return this.request(`users/${this.discogsUserName}/wants`);
+    }
+    public getUserFolders() {
+        return this.request(`users/${this.discogsUserName}/collection/folders`);
+    }
+    public getUserFolderContents(folder:string) {
+        return this.request(`users/${this.discogsUserName}/collection/folders/${folder}/releases`);
+    }
+    public getUserCollectionValue() {
+        return this.request(`users/${this.discogsUserName}/collection/value`);
+    }
+    
+//
+// RELEASE ENDPOINTS
+//
+    
+    public getRelease(releaseId: string) {
+        return this.request(`releases/${releaseId}`);
+    }
+    public getReleaseUserRating(releaseId: string) {
+        return this.request(`releases/${releaseId}/rating/${this.discogsUserName}`);
+    }
+    public getReleaseCommunityRating(releaseId: string) {
+        return this.request(`releases/${releaseId}/rating`);
+    }
+    public getReleaseStats(releaseId: string) {
+        return this.request(`releases/${releaseId}/stats`);
+    }
+    public getMasterRelease(masterId: string) {
+        return this.request(`masters/${masterId}`);
+    }
+    public getMasterReleaseVersions(masterId: string) {
+        return this.request(`masters/${masterId}/versions`); // takes parameters, needs adding
     }
 
-    public getUser(id: string) {
-        return this.request(`users/${id}`);
+//
+// ARTIST ENDPOINTS
+//
+
+    public getArtistDetails(ArtistId: string) {
+        return this.request(`artists/${ArtistId}`);
     }
-    public getUserCollection(id: string) {
-        return this.request(`users/${id}/collection`);
-    }
-    public getUserWantlist(id: string) {
-        return this.request(`users/${id}/wants`);
-    }
-    public getUserFolders(id: string) {
-        return this.request(`users/${id}/collection/folders`);
-    }
-    public getUserFolderContents(id: string, folder:string) {
-        return this.request(`users/${id}/collection/folders/${folder}/releases`);
-    }
-    public getUserCollectionValue(id: string) {
-        return this.request(`users/${id}/collection/value`);
+    public getArtistReleases(ArtistId: string) {
+        return this.request(`artists/${ArtistId}/releases`); // takes parameters, needs adding
     }
 
-    public getRelease(id: string) {
-        return this.request(`users/${id}/collection/folders`);
+    
+//
+// LABEL ENDPOINTS
+//
+
+    public getLabelDetails(LabelId: string) {
+        return this.request(`labels/${LabelId}`);
     }
+    public getLabelReleases(LabelId: string) {
+        return this.request(`labels/${LabelId}/releases`); // takes parameters, needs adding
+}
+
 }
 export default Client;
