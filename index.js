@@ -6,15 +6,12 @@ const main = async () => {
   const discogs = new Discogs({});
 
   //USER INFORMATION
-  const user = await discogs.getUser("DexVinyl");
-  const collection = await discogs.getUserCollection("DexVinyl");
-  const wantlist = await discogs.getUserWantlist("DexVinyl");
-  const folders = await discogs.getUserFolders("DexVinyl");
-  const folderContents = await discogs.getUserFolderContents(
-    "DexVinyl",
-    "1841753"
-  );
-  const collectionValue = await discogs.getUserCollectionValue("DexVinyl");
+  const user = await discogs.getUser();
+  const collection = await discogs.getUserCollection();
+  const wantlist = await discogs.getUserWantlist();
+  const folders = await discogs.getUserFolders();
+  const folderContents = await discogs.getUserFolderContents("1841753");
+  const collectionValue = await discogs.getUserCollectionValue();
 
   // RELEASE INFORMATION
 
@@ -29,22 +26,22 @@ const main = async () => {
 
   // ARTIST INFORMATION
 
-  const artist = await discogs.getArtist("72872"); //RICK ASTLEY
+  const artist = await discogs.getArtistDetails("72872"); //RICK ASTLEY
   const artistReleases = await discogs.getArtistReleases("72872");
 
   // LABEL INFORMATION
 
-  const label = await discogs.getLabel("895"); //RCA
+  const label = await discogs.getLabelDetails("895"); //RCA
   const labelReleases = await discogs.getLabelReleases("895");
 
   // DISPLAY SHIT ON SCREEN TO TEST
 
   //console.log(artist.data);
-  //   console.log(user.data);
-  //   console.log(folders.data);
-  //   console.log(collection.data);
-  //   console.log(wantlist.data);
-  //   console.log(folderContents.data);
+  console.log(user.data);
+  console.log(folders.data);
+  console.log(collection.data);
+  console.log(wantlist.data);
+  console.log(folderContents.data);
   //   console.log(collectionValue.data);
   //   console.log(releaseDetails.data);
   //   console.log(releaseDetails.data);

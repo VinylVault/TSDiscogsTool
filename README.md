@@ -52,12 +52,12 @@ RELEASE INFORMATION
 
 ARTIST INFORMATION
 
-`const artist = await discogs.getArtist("72872");` //RICK ASTLEY
+`const artist = await discogs.getArtistDetails("72872");` //RICK ASTLEY
 
 `const artistReleases = await discogs.getArtistReleases("72872");`
 
 LABEL INFORMATION
 
-`const label = await discogs.getLabel("895");` //RCA
+`const label = await discogs.getLabelDetails("895");` //RCA
 
 `const labelReleases = await discogs.getLabelReleases("895");`
