@@ -18,14 +18,14 @@ const main = async () => {
 
   // RELEASE INFORMATION
 
-  const releaseDetails = await discogs.getRelease("8749543"); //RICK-ROLL
-  const releaseUserRating = await discogs.getReleaseUserRating("8749543");
+  const releaseDetails = await discogs.getRelease("249504"); //RICK-ROLL
+  const releaseUserRating = await discogs.getReleaseUserRating("249504");
   const releaseCommunityRating = await discogs.getReleaseCommunityRating(
     "8749543"
   );
-  const releaseStats = await discogs.getReleaseStats("8749543");
-  const releaseMaster = await discogs.getMasterRelease("83725");
-  const releaseMasterVersions = await discogs.getMasterReleaseVersions("83725");
+  const releaseStats = await discogs.getReleaseStats("249504");
+  const releaseMaster = await discogs.getMasterRelease("96559");
+  const releaseMasterVersions = await discogs.getMasterReleaseVersions("96559");
 
   // ARTIST INFORMATION
 
