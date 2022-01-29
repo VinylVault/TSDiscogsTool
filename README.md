@@ -42,7 +42,7 @@ RELEASE INFORMATION
 
 `const releaseUserRating = await discogs.getReleaseUserRating("249504");`
 
-`const releaseCommunityRating = await discogs.getReleaseCommunityRating( "8749543" );`
+`const releaseCommunityRating = await discogs.getReleaseCommunityRating( "249504" );`
 
 `const releaseStats = await discogs.getReleaseStats("249504");`
 
