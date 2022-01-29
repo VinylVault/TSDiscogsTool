@@ -18,7 +18,7 @@ Currently In Development:
 
 For Search, use `TSDiscogsTool-Search` (Requires this library) this is a seperate library as it adds extra functionality than just simply searching.
 
-For A Personal DB Interface use `TSDiscogsTool-DBInterface` (Requires this library and `Search`) this will create a user updatable `Prisma` basic database schema, which you can link to your database backend of choice.
+For A Personal DB Interface use `TSDiscogsTool-DBInterface` (Requires this library and `Search`) this will create a user updatable `Prisma` basic database schema, which you can link to your database backend of choice, and makes all the Database API endpoints available.
 
 For Playlist creation use `TSDiscogsTool-Playlists` (Requires `TSDiscogsTool-DBInterface` et al) this will allow you to create custom playlists, for display on a website.
 
