@@ -18,13 +18,17 @@ Currently In Development:
 
 For Search, use `TSDiscogsTool-Search` (Requires this library) this is a seperate library as it adds extra functionality than just simply searching.
 
+Yet To Be Started:
+
 For A Personal DB Interface use `TSDiscogsTool-DBInterface` (Requires this library and `Search`) this will create a user updatable `Prisma` basic database schema, which you can link to your database backend of choice, and makes all the Database API endpoints available.
 
 For Playlist creation use `TSDiscogsTool-Playlists` (Requires `TSDiscogsTool-DBInterface` et al) this will allow you to create custom playlists, for display on a website.
 
-For Playlist creation use `TSDiscogsTool-Reviews` (Requires `TSDiscogsTool-DBInterface` et al) this will allow you to create reviews, for display on a website. [Potentially will allow posting of review to the relevant discogs release.]
+For Review creation use `TSDiscogsTool-Reviews` (Requires `TSDiscogsTool-DBInterface` et al) this will allow you to create reviews, for display on a website. [Potentially will allow posting of review to the relevant discogs release.]
 
 For Shop Management use `TSDiscogsTool-Shop` (Requires `TSDiscogsTool-DBInterface` et al) this will give you access to all the Marketplace Endpoints.
+
+We would like to manage some kind of marketplace searching, which is currently not supported natively by the API, how it will be possible, at the moment we don't know, but we will work on this.
 
 ## To Display Full Headers
 

@@ -7,7 +7,7 @@ Dotenv.config();
 const debug = Debug('discogs:info');
 
 console.info('Welcome To The Last Discogs API v2 Library You Will Ever Need')
-console.info('(c) Dex Vinyl & Mike Elsmore 2022')
+console.info('© Dex Vinyl & Mike Elsmore 2022')
 console.info('Released under MIT License')
 
 interface Ratelimit {
@@ -65,8 +65,6 @@ export class Client {
             used: 0,
         };
     }
-
-    
 
     private createAuthString({
         token,
