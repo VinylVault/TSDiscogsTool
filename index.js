@@ -7,7 +7,7 @@ const main = async () => {
 
   //USER INFORMATION
   const user = await discogs.getUser();
-  const collection = await discogs.getUserCollection("1");
+  const collection = await discogs.getUserCollection("1","artist","desc");
   const wantlist = await discogs.getUserWantlist();
   const folders = await discogs.getUserFolders();
   const folderContents = await discogs.getUserFolderContents("3784660", "2");

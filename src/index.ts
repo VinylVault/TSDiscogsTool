@@ -25,6 +25,7 @@ export class Client {
     private ratelimit: Ratelimit;
     private discogsUserName: string;
     private perPage: string;
+    private allowedSorts: string[];
 
     private defaults = {
         host: 'api.discogs.com',
@@ -37,6 +38,7 @@ export class Client {
         requestLimitInterval: 60000, // Request interval in milliseconds
         discogsUserName:' ', // Default Username can only be set in ENV file
         perPage:'50',
+        // allowedSorts: ["label", "artist", "title", "catno", "format", "rating", "added", "year"];
     }
 
     constructor({
@@ -67,6 +69,7 @@ export class Client {
             used: 0,
         };
         this.perPage = process.env.DISCOGS_PER_PAGE || this.defaults.perPage;
+        this.allowedSorts = ["label", "artist", "title", "catno", "format", "rating", "added", "year"];
     }
 
     private createAuthString({
@@ -139,9 +142,18 @@ export class Client {
         if (!sortOrder){
             sortOrder="desc"
         }
-        // let allowedSorts=["label", "artist", "title", "catno", "format", "rating", "added", "year"];
-        if (!sort){ //.includes(allowedSorts)
-            sort="added"
+        // let
+        if (!sort) {
+            sort = "added"
+        }
+        else if (sort == "year") {}
+        else if (sort == "artist") {}
+        else if (sort == "title") {}
+        else if (sort == "catno"){}
+        else if (sort == "format") {}
+        else if (sort == "rating") {}
+        else{
+            sort = "added"
         }
         return this.request(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
