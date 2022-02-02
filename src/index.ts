@@ -6,7 +6,8 @@ Dotenv.config();
 
 const debug = Debug('discogs:info');
 
-console.info('Welcome To The Last Discogs API v2 Library You Will Ever Need')
+// console.info('Welcome To The Last Discogs API v2 Library You Will Ever Need')
+console.info('JS TS Discogs API v2 Library Version 0.0.1')
 console.info('© Dex Vinyl & Mike Elsmore 2022')
 console.info('Released under MIT License')
 
@@ -29,7 +30,7 @@ export class Client {
     private defaults = {
         host: 'api.discogs.com',
         port: 443,
-        userAgent: 'DisConnectClient',
+        userAgent: 'JSTSDiscogsAPIV2Library',
         apiVersion: 'v2',
         outputFormat: 'discogs',    // Possible values: 'discogs' / 'plaintext' / 'html'
         requestLimit: 25,           // Maximum number of requests to the Discogs API per interval

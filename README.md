@@ -1,24 +1,34 @@
-# TSDiscogsTool
+# TS/JS Discogs APIv2 Library Version 0.0.1
 
 Tool to talk to Discogs API V2
 
-Currently Only Supports Personal Access Key, Key/Secret will be supported in 0.0.2 and oAuth2 in 0.0.3
+Currently, Only Supports Personal Access Key, Key/Secret will be supported in 0.0.2 and oAuth2 in 0.0.3
 
-### Roadmap
+# Installation
 
-v0.0.1 only supports GET endpoints
+Information to follow, once NPM has populated.
+
+## Roadmap
+
+v0.0.1 only support GET endpoints
+
 v0.0.2 will support PUT, POST, DELETE endpoints and add Key:Secret
-v0.0.3 will add oAuth Access
+
+v0.0.3 will add oAuth Access and Auto Rate-Limiting based on specific user permissions.
+
+v0.0.4 and further will add user suggestions, and further enhancements.
 
 ### Additional Modules, Additional Functionality (Currently In Development)
 
-Complete:
+**Complete**:
 
-Currently In Development:
+Currently None
 
-For Search, use `TSDiscogsTool-Search` (Requires this library) this is a seperate library as it adds extra functionality than just simply searching.
+**Currently In Development**:
 
-Yet To Be Started:
+For Search, use `TSDiscogsTool-Search` (Requires this library) this is a separate library as it will (when 100% feature complete) add extra functionality than just simply searching.
+
+**Yet To Be Started**:
 
 For A Personal DB Interface use `TSDiscogsTool-DBInterface` (Requires this library and `Search`) this will create a user updatable `Prisma` basic database schema, which you can link to your database backend of choice, and makes all the Database API endpoints available.
 
@@ -44,7 +54,7 @@ Users should set Discogs Username in .env file
 
 Discogs Personal Access Key should be set in .env file
 
-USER INFORMATION
+### USER INFORMATION
 
 `const user = await discogs.getUser();`
 
@@ -54,13 +64,13 @@ USER INFORMATION
 
 `const folders = await discogs.getUserFolders();`
 
-`const folderContents = await discogs.getUserFolderContents("1841753");`
+`const folderContents = await discogs.getUserFolderContents("#");`  **# = FolderID As In Your Custom Folders in Discogs Dashboard**
 
 `const collectionValue = await discogs.getUserCollectionValue();`
 
-RELEASE INFORMATION
+### RELEASE INFORMATION
 
-`const releaseDetails = await discogs.getRelease("249504");` //RICK-ROLL
+`const releaseDetails = await discogs.getRelease("249504");` **//RICK-ROLL (same as Official Docs)**
 
 `const releaseUserRating = await discogs.getReleaseUserRating("249504");`
 
@@ -72,14 +82,38 @@ RELEASE INFORMATION
 
 `const releaseMasterVersions = await discogs.getMasterReleaseVersions("96559");`
 
-ARTIST INFORMATION
+### ARTIST INFORMATION
 
-`const artist = await discogs.getArtistDetails("72872");` //RICK ASTLEY
+`const artist = await discogs.getArtistDetails("72872");` **//RICK ASTLEY**
 
 `const artistReleases = await discogs.getArtistReleases("72872");`
 
-LABEL INFORMATION
+### LABEL INFORMATION
 
-`const label = await discogs.getLabelDetails("895");` //RCA
+`const label = await discogs.getLabelDetails("895");` **//RCA**
 
 `const labelReleases = await discogs.getLabelReleases("895");`
+
+# Suggestions, Updates & Errors
+
+If you choose to use this library, and run into a problem, please log an issue or raise a PR, we are committed to this project in the long term and will act on all Issues promptly.
+
+If you have suggestions for further functionality that is not already in the roadmap, please raise an Issue, we will add it to the list.
+
+# Thanks
+
+Thanks go out to [Mike Elsmore](https://github.com/ukmadLz). Without your help and support this project would never have got off the ground.
+
+Thanks go to [Discogs](https://discogs.com) for enabling an API
+
+Thanks go to [Bartve](https://github.com/bartve) for [Disconnect](https://github.com/bartve/disconnect) which although now unsupported, is a great library.  Disconnect was part of the inspiration for this Library.
+
+Thanks go to [Joalla](https://github.com/joalla) for [Disgogs_Client](https://github.com/joalla/discogs_client) which was part of the inspirtion for this library.  I used this library extensively when I created a Python / Django version of the [VinylVault Website](https://www.thevinylvaultshow.co.uk)
+
+# License 
+
+MIT
+
+# Other Resources
+
+[Discogs API Documentation](http://www.discogs.com/developers/)
