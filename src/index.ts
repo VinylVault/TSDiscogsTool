@@ -24,6 +24,7 @@ export class Client {
     private auth: string|null;
     private ratelimit: Ratelimit;
     private discogsUserName: string;
+    private perPage: string;
 
     private defaults = {
         host: 'api.discogs.com',
@@ -35,6 +36,7 @@ export class Client {
         requestLimitAuth: 60,       // Maximum number of requests to the Discogs API per interval when authenticated
         requestLimitInterval: 60000, // Request interval in milliseconds
         discogsUserName:' ', // Default Username can only be set in ENV file
+        perPage:'50',
     }
 
     constructor({
@@ -64,6 +66,7 @@ export class Client {
             remaining: 25,
             used: 0,
         };
+        this.perPage = process.env.DISCOGS_PER_PAGE || this.defaults.perPage;
     }
 
     private createAuthString({
@@ -129,17 +132,33 @@ export class Client {
     public getUser() {
         return this.request(`users/${this.discogsUserName}`);
     }
-    public getUserCollection() {
-        return this.request(`users/${this.discogsUserName}/collection`);
+    public getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
+        if (!pageNumber){
+            pageNumber="1"
+        }
+        if (!sortOrder){
+            sortOrder="desc"
+        }
+        // let allowedSorts=["label", "artist", "title", "catno", "format", "rating", "added", "year"];
+        if (!sort){ //.includes(allowedSorts)
+            sort="added"
+        }
+        return this.request(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
-    public getUserWantlist() {
-        return this.request(`users/${this.discogsUserName}/wants`);
+    public getUserWantlist(pageNumber:string) {
+        if (!pageNumber){
+            pageNumber="1"
+        }
+        return this.request(`users/${this.discogsUserName}/wants?per_page=${this.perPage}&page=${pageNumber}`);
     }
     public getUserFolders() {
         return this.request(`users/${this.discogsUserName}/collection/folders`);
     }
-    public getUserFolderContents(folder:string) {
-        return this.request(`users/${this.discogsUserName}/collection/folders/${folder}/releases`);
+    public getUserFolderContents(folder:string, pageNumber:string) {
+        if (!pageNumber){
+            pageNumber="1"
+        }
+        return this.request(`users/${this.discogsUserName}/collection/folders/${folder}/releases?per_page=${this.perPage}&page=${pageNumber}`);
     }
     public getUserCollectionValue() {
         return this.request(`users/${this.discogsUserName}/collection/value`);
@@ -152,7 +171,7 @@ export class Client {
     public getRelease(releaseId: string) {
         return this.request(`releases/${releaseId}`);
     }
-    public getReleaseUserRating(releaseId: string) {
+    public getReleaseUserRating(releaseId: string, pageNumber:string) {
         return this.request(`releases/${releaseId}/rating/${this.discogsUserName}`);
     }
     public getReleaseCommunityRating(releaseId: string) {
@@ -175,8 +194,11 @@ export class Client {
     public getArtistDetails(ArtistId: string) {
         return this.request(`artists/${ArtistId}`);
     }
-    public getArtistReleases(ArtistId: string) {
-        return this.request(`artists/${ArtistId}/releases`); // takes parameters, needs adding
+    public getArtistReleases(ArtistId: string, pageNumber:string) {
+        if (!pageNumber){
+            pageNumber="1"
+        }
+        return this.request(`artists/${ArtistId}/releases?per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
     }
 
     
@@ -187,8 +209,11 @@ export class Client {
     public getLabelDetails(LabelId: string) {
         return this.request(`labels/${LabelId}`);
     }
-    public getLabelReleases(LabelId: string) {
-        return this.request(`labels/${LabelId}/releases`); // takes parameters, needs adding
+    public getLabelReleases(LabelId: string, pageNumber:string) {
+        if (!pageNumber){
+            pageNumber="1"
+        }
+        return this.request(`labels/${LabelId}/releases?per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
 }
 
 }

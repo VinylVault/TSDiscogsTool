@@ -7,10 +7,10 @@ const main = async () => {
 
   //USER INFORMATION
   const user = await discogs.getUser();
-  const collection = await discogs.getUserCollection();
+  const collection = await discogs.getUserCollection("1");
   const wantlist = await discogs.getUserWantlist();
   const folders = await discogs.getUserFolders();
-  const folderContents = await discogs.getUserFolderContents("1841753");
+  const folderContents = await discogs.getUserFolderContents("3784660", "2");
   const collectionValue = await discogs.getUserCollectionValue();
 
   // RELEASE INFORMATION
@@ -38,10 +38,10 @@ const main = async () => {
 
   //console.log(artist.data);
   console.log(user.data);
-  console.log(folders.data);
+  // console.log(folders.data);
   console.log(collection.data);
-  console.log(wantlist.data);
-  console.log(folderContents.data);
+  // console.log(wantlist.data);
+  // console.log(folderContents.data);
   //   console.log(collectionValue.data);
   //   console.log(releaseDetails.data);
   //   console.log(releaseDetails.data);
