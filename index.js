@@ -26,20 +26,20 @@ const main = async () => {
 
   // ARTIST INFORMATION
 
-  const artist = await discogs.getArtistDetails("72872"); //RICK ASTLEY
+  const artistDetails = await discogs.getArtistDetails("72872"); //RICK ASTLEY
   const artistReleases = await discogs.getArtistReleases("72872");
 
   // LABEL INFORMATION
 
-  const label = await discogs.getLabelDetails("895"); //RCA
+  const labelDetails = await discogs.getLabelDetails("895"); //RCA
   const labelReleases = await discogs.getLabelReleases("895");
 
   // DISPLAY SHIT ON SCREEN TO TEST
 
   //console.log(artist.data);
-  console.log(user.data);
+  // console.log(user.data);
   // console.log(folders.data);
-  console.log(collection.data);
+  // console.log(collection.data);
   // console.log(wantlist.data);
   // console.log(folderContents.data);
   //   console.log(collectionValue.data);
