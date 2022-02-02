@@ -25,7 +25,6 @@ export class Client {
     private ratelimit: Ratelimit;
     private discogsUserName: string;
     private perPage: string;
-    private allowedSorts: string[];
 
     private defaults = {
         host: 'api.discogs.com',
@@ -38,7 +37,6 @@ export class Client {
         requestLimitInterval: 60000, // Request interval in milliseconds
         discogsUserName:' ', // Default Username can only be set in ENV file
         perPage:'50',
-        // allowedSorts: ["label", "artist", "title", "catno", "format", "rating", "added", "year"];
     }
 
     constructor({
@@ -69,7 +67,6 @@ export class Client {
             used: 0,
         };
         this.perPage = process.env.DISCOGS_PER_PAGE || this.defaults.perPage;
-        this.allowedSorts = ["label", "artist", "title", "catno", "format", "rating", "added", "year"];
     }
 
     private createAuthString({
@@ -157,20 +154,52 @@ export class Client {
         }
         return this.request(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
-    public getUserWantlist(pageNumber:string) {
+    public getUserWantlist(pageNumber:string, sort:string, sortOrder:string) {
         if (!pageNumber){
             pageNumber="1"
         }
-        return this.request(`users/${this.discogsUserName}/wants?per_page=${this.perPage}&page=${pageNumber}`);
+        if (!sortOrder){
+            sortOrder="desc"
+        }
+        // let
+        if (!sort) {
+            sort = "added"
+        }
+        else if (sort == "year") {}
+        else if (sort == "artist") {}
+        else if (sort == "title") {}
+        else if (sort == "catno"){}
+        else if (sort == "format") {}
+        else if (sort == "rating") {}
+        else{
+            sort = "added"
+        }
+        return this.request(`users/${this.discogsUserName}/wants?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
     public getUserFolders() {
         return this.request(`users/${this.discogsUserName}/collection/folders`);
     }
-    public getUserFolderContents(folder:string, pageNumber:string) {
+    public getUserFolderContents(folder:string, pageNumber:string, sort:string, sortOrder:string) {
         if (!pageNumber){
             pageNumber="1"
         }
-        return this.request(`users/${this.discogsUserName}/collection/folders/${folder}/releases?per_page=${this.perPage}&page=${pageNumber}`);
+        if (!sortOrder){
+            sortOrder="desc"
+        }
+        // let
+        if (!sort) {
+            sort = "added"
+        }
+        else if (sort == "year") {}
+        else if (sort == "artist") {}
+        else if (sort == "title") {}
+        else if (sort == "catno"){}
+        else if (sort == "format") {}
+        else if (sort == "rating") {}
+        else{
+            sort = "added"
+        }
+        return this.request(`users/${this.discogsUserName}/collection/folders/${folder}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
     public getUserCollectionValue() {
         return this.request(`users/${this.discogsUserName}/collection/value`);
@@ -183,7 +212,7 @@ export class Client {
     public getRelease(releaseId: string) {
         return this.request(`releases/${releaseId}`);
     }
-    public getReleaseUserRating(releaseId: string, pageNumber:string) {
+    public getReleaseUserRating(releaseId: string) {
         return this.request(`releases/${releaseId}/rating/${this.discogsUserName}`);
     }
     public getReleaseCommunityRating(releaseId: string) {
@@ -206,11 +235,23 @@ export class Client {
     public getArtistDetails(ArtistId: string) {
         return this.request(`artists/${ArtistId}`);
     }
-    public getArtistReleases(ArtistId: string, pageNumber:string) {
+    public getArtistReleases(ArtistId: string, pageNumber:string, sort:string, sortOrder:string) {
         if (!pageNumber){
             pageNumber="1"
         }
-        return this.request(`artists/${ArtistId}/releases?per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
+        if (!sortOrder){
+            sortOrder="desc"
+        }
+        // let
+        if (!sort) {
+            sort = "title"
+        }
+        else if (sort == "year") {}
+        else if (sort == "format") {}
+        else{
+            sort = "title"
+        }
+        return this.request(`artists/${ArtistId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
     }
 
     
@@ -221,11 +262,25 @@ export class Client {
     public getLabelDetails(LabelId: string) {
         return this.request(`labels/${LabelId}`);
     }
-    public getLabelReleases(LabelId: string, pageNumber:string) {
+    public getLabelReleases(LabelId: string, pageNumber:string, sort:string, sortOrder:string) {
         if (!pageNumber){
             pageNumber="1"
         }
-        return this.request(`labels/${LabelId}/releases?per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
+        if (!sortOrder){
+            sortOrder="desc"
+        }
+        // let
+        if (!sort) {
+            sort = "title"
+        }
+        else if (sort == "year") {}
+        else if (sort == "artist") {}
+        else if (sort == "catno"){}
+        else if (sort == "format") {}
+        else{
+            sort = "added"
+        }
+        return this.request(`labels/${LabelId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
 }
 
 }
