@@ -145,13 +145,20 @@ export class Client {
     public async calculateRateLimitRemaining(){
         let rateRemaining = this.getRatelimit().remaining;
         let rateBarrier = this.getRatelimit().ratelimit/5;
+        console.log ("You Have " + rateRemaining + " Requests Remaining");
         if ( rateRemaining <= rateBarrier ){
-            console.log ("You've Used ALL You API Rate Allowance, Waiting for 20 Seconds");
+            console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
             console.log ("You Have " + rateRemaining + " Requests Remaining");
             console.log ("The Threshold is " + rateBarrier + " Requests");
-            await this.delay(20000);
-            console.log ("Ok I Waited 20 Seconds, Continuing... Was The Wait Long Enough?");
+            await this.delay(60000);
+            // NOT CONVINCED THIS IS WAITING A FULL 1 MINUTE (APPEARS TO BE ABOUT 30 SECONDS)
+            // ACCORDING TO THE CONSOLE OUTPUT, THE RATE LIMIT ISN'T RESETTING LIKE IT SHOULD AFTER THIS.
+            console.log ("Ok I Waited 1 Minute, Continuing... ");
             await this.delay(1000);
+            console.log ("You Have " + this.getRatelimit().remaining + " Requests Remaining");
+            // THIS IS INCORRECT! DATA NEEDS TO BE RE-GOT
+            // IF DONE BY CALLING FOR EXAMPLE `getUser()` THIS WILL COST 1 API CALL
+            // WE CAN NOT BE USING AN API CALL TO GET RATE-LIMIT INFORMATION
         }
     }
 
@@ -190,6 +197,7 @@ export class Client {
 
         return this.request(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
+
     public async getUserWantlist(pageNumber:string, sort:string, sortOrder:string) {
         const timeout = await this.calculateRateLimitRemaining();
 
@@ -216,11 +224,13 @@ export class Client {
 
         return this.request(`users/${this.discogsUserName}/wants?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
+
     public async getUserFolders() {
         const timeout = await this.calculateRateLimitRemaining();
 
         return this.request(`users/${this.discogsUserName}/collection/folders`);
     }
+
     public async getUserFolderContents(folder:string, pageNumber:string, sort:string, sortOrder:string) {
         const timeout = await this.calculateRateLimitRemaining();
 

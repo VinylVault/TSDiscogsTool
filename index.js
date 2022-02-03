@@ -61,17 +61,8 @@ const main = async () => {
 
   const labelReleases = await discogs.getLabelReleases("895");
   // console.log(labelReleases.data);
+  console.log(labelReleases.headers)
 
-
-  // DISPLAY SHIT ON SCREEN TO TEST
-
-  console.log(discogs.getRatelimit());
-
-  console.log(discogs.getRatelimit().remaining)
-
-  if(discogs.getRatelimit().remaining <= (discogs.getRatelimit().ratelimit/5)){
-    console.log("oopsie")
-  }
 };
 
 main();
