@@ -1,13 +1,13 @@
 require("dotenv");
 const Discogs = require("./dist").default;
-console.log("Bollocks, This Works, I'm A Software Engineer!");
+// console.log("Bollocks, This Works, I'm A Software Engineer!");
 
 const main = async () => {
   const discogs = new Discogs({});
 
   //USER INFORMATION
   const user = await discogs.getUser();
-  const collection = await discogs.getUserCollection("1","artist","desc");
+  const collection = await discogs.getUserCollection("1", "artist", "desc");
   const wantlist = await discogs.getUserWantlist();
   const folders = await discogs.getUserFolders();
   const folderContents = await discogs.getUserFolderContents("3784660", "2");
