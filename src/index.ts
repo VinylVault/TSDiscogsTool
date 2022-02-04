@@ -144,18 +144,19 @@ export class Client {
 
     public async calculateRateLimitRemaining(){
         let rateRemaining = this.getRatelimit().remaining;
-        let rateBarrier = this.getRatelimit().ratelimit/5;
-        console.log ("You Have " + rateRemaining + " Requests Remaining");
+        let rateBarrier = 2;//this.getRatelimit().ratelimit/5;
+        let currentTime = new Date();
+        await console.log ("You Have " + rateRemaining + " Requests Remaining");
         if ( rateRemaining <= rateBarrier ){
-            console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
-            console.log ("You Have " + rateRemaining + " Requests Remaining");
-            console.log ("The Threshold is " + rateBarrier + " Requests");
+            await console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
+            await console.log ("You Have " + rateRemaining + " Requests Remaining");
+            await console.log ("The Threshold is " + rateBarrier + " Requests");
+            await console.log (new Date());
             await this.delay(60000);
-            // NOT CONVINCED THIS IS WAITING A FULL 1 MINUTE (APPEARS TO BE ABOUT 30 SECONDS)
-            // ACCORDING TO THE CONSOLE OUTPUT, THE RATE LIMIT ISN'T RESETTING LIKE IT SHOULD AFTER THIS.
-            console.log ("Ok I Waited 1 Minute, Continuing... ");
+            await console.log ("Ok I Waited 1 Minute, Continuing... ");
+            await console.log (new Date());
             await this.delay(1000);
-            console.log ("You Have " + this.getRatelimit().remaining + " Requests Remaining");
+            await console.log ("You Have " + this.getRatelimit().remaining + " Requests Remaining");
             // THIS IS INCORRECT! DATA NEEDS TO BE RE-GOT
             // IF DONE BY CALLING FOR EXAMPLE `getUser()` THIS WILL COST 1 API CALL
             // WE CAN NOT BE USING AN API CALL TO GET RATE-LIMIT INFORMATION
