@@ -41,14 +41,14 @@ export class Client {
     }
 
     constructor({
-        host,
-        port,
-        userAgent,
-        token,
-        key,
-        secret,
-        discogsUserName,
-    }: {
+                    host,
+                    port,
+                    userAgent,
+                    token,
+                    key,
+                    secret,
+                    discogsUserName,
+                }: {
         host?: string,
         port?: number;
         userAgent?: string;
@@ -71,20 +71,22 @@ export class Client {
     }
 
     private createAuthString({
-        token,
-        key,
-        secret,
-    }: {
+                                 token,
+                                 key,
+                                 secret,
+                             }: {
         token?: string,
         key?: string,
         secret?: string,
     }) {
         let authString;
+
         if (token || process.env.DISCOGS_API_TOKEN) {
             authString = `token=${(token || process.env.DISCOGS_API_TOKEN)}`;
         } else if ((key || process.env.DISCOGS_API_KEY) && (secret || process.env.DISCOGS_API_SECRET)) {
             authString = `key=${(key || process.env.DISCOGS_API_KEY)}, secret=${(secret || process.env.DISCOGS_API_SECRET)}`;
         }
+
         return authString || null;
     }
 
@@ -92,9 +94,11 @@ export class Client {
         const requestHeaders: any = {
             'User-Agent': this.userAgent,
         };
+
         if (this.auth) {
             requestHeaders['Authorization'] = `Discogs ${this.auth}`
         }
+
         try {
             const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
                 // method: 'post',
@@ -113,7 +117,35 @@ export class Client {
                 headers: responseHeaders,
             };
         } catch (error) {
-            console.error(error);
+            let theError = error;
+            await console.error(theError);
+            // @ts-ignore
+            // console.error(theError.type);
+            // @ts-ignore
+            if (theError.type == "invalid-json"){
+                await this.delay(1000);
+                try {
+                    const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
+                        // method: 'post',
+                        // body: JSON.stringify({}),
+                        headers: requestHeaders,
+                    });
+                    const responseHeaders = response.headers;
+                    const data = await response.json();
+                    this.ratelimit = {
+                        ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
+                        remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
+                        used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
+                    }
+                    return {
+                        data,
+                        headers: responseHeaders,
+                    };
+                } catch (error) {
+                    let theError = error;
+                    await console.error(theError);
+                }
+            }
         }
     }
 
@@ -126,21 +158,59 @@ export class Client {
         return this.request(path);
     }
 
-   
+//
+// HAVE A NAP
+//
+
+    private delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+//
+// CALCULATE RATE LIMIT
+//
+
+    public async calculateRateLimitRemaining(){
+        let rateRemaining = this.getRatelimit().remaining;
+        let rateBarrier = 2;//this.getRatelimit().ratelimit/5;
+        let currentTime = new Date();
+        await console.log ("You Have " + rateRemaining + " Requests Remaining");
+        if ( rateRemaining <= rateBarrier ){
+            await console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
+            await console.log ("You Have " + rateRemaining + " Requests Remaining");
+            await console.log ("The Threshold is " + rateBarrier + " Requests");
+            await console.log (new Date());
+            await this.delay(60000);
+            await console.log ("Ok I Waited 1 Minute, Continuing... ");
+            await console.log (new Date());
+            await this.delay(1000);
+            await console.log ("You Have " + this.getRatelimit().remaining + " Requests Remaining");
+            // THIS IS INCORRECT! DATA NEEDS TO BE RE-GOT
+            // IF DONE BY CALLING FOR EXAMPLE `getUser()` THIS WILL COST 1 API CALL
+            // WE CAN NOT BE USING AN API CALL TO GET RATE-LIMIT INFORMATION
+        }
+    }
+
+
 //
 // USER SPECIFIC ENDPOINTS
-// 
-    public getUser() {
+//
+
+    public async getUser() {
         return this.request(`users/${this.discogsUserName}`);
     }
-    public getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
+
+    public async getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         if (!pageNumber){
             pageNumber="1"
         }
+
         if (!sortOrder){
             sortOrder="desc"
         }
-        // let
+
         if (!sort) {
             sort = "added"
         }
@@ -153,16 +223,21 @@ export class Client {
         else{
             sort = "added"
         }
+
         return this.request(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
-    public getUserWantlist(pageNumber:string, sort:string, sortOrder:string) {
+
+    public async getUserWantlist(pageNumber:string, sort:string, sortOrder:string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         if (!pageNumber){
             pageNumber="1"
         }
+
         if (!sortOrder){
             sortOrder="desc"
         }
-        // let
+
         if (!sort) {
             sort = "added"
         }
@@ -175,19 +250,27 @@ export class Client {
         else{
             sort = "added"
         }
+
         return this.request(`users/${this.discogsUserName}/wants?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
-    public getUserFolders() {
+
+    public async getUserFolders() {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`users/${this.discogsUserName}/collection/folders`);
     }
-    public getUserFolderContents(folder:string, pageNumber:string, sort:string, sortOrder:string) {
+
+    public async getUserFolderContents(folder:string, pageNumber:string, sort:string, sortOrder:string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         if (!pageNumber){
             pageNumber="1"
         }
+
         if (!sortOrder){
             sortOrder="desc"
         }
-        // let
+
         if (!sort) {
             sort = "added"
         }
@@ -200,32 +283,53 @@ export class Client {
         else{
             sort = "added"
         }
+
         return this.request(`users/${this.discogsUserName}/collection/folders/${folder}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
-    public getUserCollectionValue() {
+
+    public async getUserCollectionValue() {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`users/${this.discogsUserName}/collection/value`);
     }
-    
+
 //
 // RELEASE ENDPOINTS
 //
-    
-    public getRelease(releaseId: string) {
+
+    public async getRelease(releaseId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`releases/${releaseId}`);
     }
-    public getReleaseUserRating(releaseId: string) {
+
+    public async getReleaseUserRating(releaseId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`releases/${releaseId}/rating/${this.discogsUserName}`);
     }
-    public getReleaseCommunityRating(releaseId: string) {
+
+    public async getReleaseCommunityRating(releaseId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`releases/${releaseId}/rating`);
     }
-    public getReleaseStats(releaseId: string) {
+
+    public async getReleaseStats(releaseId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`releases/${releaseId}/stats`);
     }
-    public getMasterRelease(masterId: string) {
+
+    public async getMasterRelease(masterId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`masters/${masterId}`);
     }
-    public getMasterReleaseVersions(masterId: string) {
+
+    public async getMasterReleaseVersions(masterId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`masters/${masterId}/versions`); // takes parameters, needs adding
     }
 
@@ -233,17 +337,23 @@ export class Client {
 // ARTIST ENDPOINTS
 //
 
-    public getArtistDetails(ArtistId: string) {
+    public async getArtistDetails(ArtistId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`artists/${ArtistId}`);
     }
-    public getArtistReleases(ArtistId: string, pageNumber:string, sort:string, sortOrder:string) {
+
+    public async getArtistReleases(ArtistId: string, pageNumber:string, sort:string, sortOrder:string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         if (!pageNumber){
             pageNumber="1"
         }
+
         if (!sortOrder){
             sortOrder="desc"
         }
-        // let
+
         if (!sort) {
             sort = "title"
         }
@@ -252,25 +362,32 @@ export class Client {
         else{
             sort = "title"
         }
+
         return this.request(`artists/${ArtistId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
     }
 
-    
+
 //
 // LABEL ENDPOINTS
 //
 
-    public getLabelDetails(LabelId: string) {
+    public async getLabelDetails(LabelId: string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         return this.request(`labels/${LabelId}`);
     }
-    public getLabelReleases(LabelId: string, pageNumber:string, sort:string, sortOrder:string) {
+
+    public async getLabelReleases(LabelId: string, pageNumber:string, sort:string, sortOrder:string) {
+        const timeout = await this.calculateRateLimitRemaining();
+
         if (!pageNumber){
             pageNumber="1"
         }
+
         if (!sortOrder){
             sortOrder="desc"
         }
-        // let
+
         if (!sort) {
             sort = "title"
         }
@@ -281,8 +398,9 @@ export class Client {
         else{
             sort = "added"
         }
+
         return this.request(`labels/${LabelId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
-}
+    }
 
 }
 export default Client;
