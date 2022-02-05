@@ -8,7 +8,7 @@ const debug = Debug('discogs:info');
 
 // console.info('Welcome To The Last Discogs API v2 Library You Will Ever Need')
 console.info('JS TS Discogs API v2 Library Version 0.0.1')
-console.info('© Dex Vinyl & Mike Elsmore 2022')
+console.info('© Dex Vinyl 2022')
 console.info('Released under MIT License')
 
 interface Ratelimit {
@@ -81,10 +81,14 @@ export class Client {
     }) {
         let authString;
 
-        if (token || process.env.DISCOGS_API_TOKEN) {
-            authString = `token=${(token || process.env.DISCOGS_API_TOKEN)}`;
-        } else if ((key || process.env.DISCOGS_API_KEY) && (secret || process.env.DISCOGS_API_SECRET)) {
-            authString = `key=${(key || process.env.DISCOGS_API_KEY)}, secret=${(secret || process.env.DISCOGS_API_SECRET)}`;
+        let discogsToken = token || process.env.DISCOGS_API_TOKEN
+        let discogsKey = key || process.env.DISCOGS_API_KEY
+        let discogsSecret = secret || process.env.DISCOGS_API_SECRET
+
+        if (discogsToken) {
+            authString = `token=${(discogsToken)}`;
+        } else if ((discogsKey) && (discogsSecret)) {
+            authString = `key=${(discogsKey)}, secret=${(discogsSecret)}`;
         }
 
         return authString || null;
@@ -98,52 +102,32 @@ export class Client {
         if (this.auth) {
             requestHeaders['Authorization'] = `Discogs ${this.auth}`
         }
-
-        try {
-            const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
-                // method: 'post',
-                // body: JSON.stringify({}),
-                headers: requestHeaders,
-            });
-            const responseHeaders = response.headers;
-            const data = await response.json();
-            this.ratelimit = {
-                ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
-                remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
-                used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
-            }
-            return {
-                data,
-                headers: responseHeaders,
-            };
-        } catch (error) {
-            let theError = error;
-            await console.error(theError);
-            // @ts-ignore
-            // console.error(theError.type);
-            // @ts-ignore
-            if (theError.type == "invalid-json"){
-                await this.delay(1000);
-                try {
-                    const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
-                        // method: 'post',
-                        // body: JSON.stringify({}),
-                        headers: requestHeaders,
-                    });
-                    const responseHeaders = response.headers;
-                    const data = await response.json();
-                    this.ratelimit = {
-                        ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
-                        remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
-                        used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
-                    }
-                    return {
-                        data,
-                        headers: responseHeaders,
-                    };
-                } catch (error) {
-                    let theError = error;
-                    await console.error(theError);
+        while (true) {
+            try {
+                const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
+                    // method: 'post',
+                    // body: JSON.stringify({}),
+                    headers: requestHeaders,
+                });
+                const responseHeaders = response.headers;
+                const data = await response.json();
+                this.ratelimit = {
+                    ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
+                    remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
+                    used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
+                }
+                return {
+                    data,
+                    headers: responseHeaders,
+                };
+            } catch (error) {
+                let theError = error;
+                console.error(theError);
+                // @ts-ignore
+                if (theError.type == "invalid-json") {
+                    console.log("Invalid JSON Received Waiting 5 Seconds Before Retry");
+                    await this.delay(5000);
+                    console.log("Trying Again")
                 }
             }
         }
@@ -154,7 +138,7 @@ export class Client {
     }
 
     // Helper Functions
-    public getRequest (path: string) {
+    public async getRequest (path: string) {
         return this.request(path);
     }
 
@@ -162,7 +146,7 @@ export class Client {
 // HAVE A NAP
 //
 
-    private delay(ms: number) {
+    private async delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
@@ -174,15 +158,14 @@ export class Client {
         let rateRemaining = this.getRatelimit().remaining;
         let rateBarrier = 2;//this.getRatelimit().ratelimit/5;
         let currentTime = new Date();
-        await console.log ("You Have " + rateRemaining + " Requests Remaining");
+        console.log ("You Have " + rateRemaining + " Requests Remaining");
         if ( rateRemaining <= rateBarrier ){
-            await console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
-            await console.log ("You Have " + rateRemaining + " Requests Remaining");
-            await console.log ("The Threshold is " + rateBarrier + " Requests");
-            await console.log (new Date());
+            console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
+            console.log ("The Threshold is " + rateBarrier + " Requests");
+            console.log (new Date());
             await this.delay(60000);
-            await console.log ("Ok I Waited 1 Minute, Continuing... ");
-            await console.log (new Date());
+            console.log ("Ok I Waited 1 Minute, Continuing... ");
+            console.log (new Date());
             await this.delay(1000);
         }
     }
