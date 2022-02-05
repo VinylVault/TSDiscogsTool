@@ -102,63 +102,32 @@ export class Client {
         if (this.auth) {
             requestHeaders['Authorization'] = `Discogs ${this.auth}`
         }
-
-        try {
-            const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
-                // method: 'post',
-                // body: JSON.stringify({}),
-                headers: requestHeaders,
-            });
-            const responseHeaders = response.headers;
-            const data = await response.json();
-            this.ratelimit = {
-                ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
-                remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
-                used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
-            }
-            return {
-                data,
-                headers: responseHeaders,
-            };
-        } catch (error) {
-            let theError = error;
-            await console.error(theError);
-            // @ts-ignore
-            if (theError.type == "invalid-json"){
-                await this.delay(1000);
-
-                // @THATN00B - IF YOU CAN ADVISE HERE THAT WOULD BE GREAT!
-                //
-                // I'M NOT HAPPY WITH THIS ... IT MUST BE ABLE TO BE DONE BETTER
-                // THE BELOW CODE IS A COPY OF THE CODE ABOVE, BUT I WANT IT TO RUN AGAIN
-                // WHEN THE JSON RETURNED IS FAULTY, WHICH HAPPENS REGULARLY.
-                // (THANKS CLOUDFLARE)
-                //
-                // THIS SHOULD RUN ON AN INFINITE LOOP UNTIL CORRECTLY FORMED JSON IS RECEIVED
-                // OR A DIFFERENT ERROR IS RECEIVED
-                //
-                //
-
-                try {
-                    const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
-                        // method: 'post',
-                        // body: JSON.stringify({}),
-                        headers: requestHeaders,
-                    });
-                    const responseHeaders = response.headers;
-                    const data = await response.json();
-                    this.ratelimit = {
-                        ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
-                        remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
-                        used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
-                    }
-                    return {
-                        data,
-                        headers: responseHeaders,
-                    };
-                } catch (error) {
-                    let theError = error;
-                    await console.error(theError);
+        while (true) {
+            try {
+                const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
+                    // method: 'post',
+                    // body: JSON.stringify({}),
+                    headers: requestHeaders,
+                });
+                const responseHeaders = response.headers;
+                const data = await response.json();
+                this.ratelimit = {
+                    ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
+                    remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
+                    used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
+                }
+                return {
+                    data,
+                    headers: responseHeaders,
+                };
+            } catch (error) {
+                let theError = error;
+                console.error(theError);
+                // @ts-ignore
+                if (theError.type == "invalid-json") {
+                    console.log("Invalid JSON Received Waiting 5 Seconds Before Retry");
+                    await this.delay(5000);
+                    console.log("Trying Again")
                 }
             }
         }
@@ -169,7 +138,7 @@ export class Client {
     }
 
     // Helper Functions
-    public getRequest (path: string) {
+    public async getRequest (path: string) {
         return this.request(path);
     }
 
@@ -177,7 +146,7 @@ export class Client {
 // HAVE A NAP
 //
 
-    private delay(ms: number) {
+    private async delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
