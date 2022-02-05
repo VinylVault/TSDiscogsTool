@@ -41,14 +41,14 @@ export class Client {
     }
 
     constructor({
-        host,
-        port,
-        userAgent,
-        token,
-        key,
-        secret,
-        discogsUserName,
-    }: {
+                    host,
+                    port,
+                    userAgent,
+                    token,
+                    key,
+                    secret,
+                    discogsUserName,
+                }: {
         host?: string,
         port?: number;
         userAgent?: string;
@@ -71,10 +71,10 @@ export class Client {
     }
 
     private createAuthString({
-        token,
-        key,
-        secret,
-    }: {
+                                 token,
+                                 key,
+                                 secret,
+                             }: {
         token?: string,
         key?: string,
         secret?: string,
@@ -117,7 +117,35 @@ export class Client {
                 headers: responseHeaders,
             };
         } catch (error) {
-            console.error(error);
+            let theError = error;
+            await console.error(theError);
+            // @ts-ignore
+            // console.error(theError.type);
+            // @ts-ignore
+            if (theError.type == "invalid-json"){
+                await this.delay(1000);
+                try {
+                    const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
+                        // method: 'post',
+                        // body: JSON.stringify({}),
+                        headers: requestHeaders,
+                    });
+                    const responseHeaders = response.headers;
+                    const data = await response.json();
+                    this.ratelimit = {
+                        ratelimit: Number(responseHeaders.get('x-discogs-ratelimit')),
+                        remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
+                        used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
+                    }
+                    return {
+                        data,
+                        headers: responseHeaders,
+                    };
+                } catch (error) {
+                    let theError = error;
+                    await console.error(theError);
+                }
+            }
         }
     }
 
@@ -156,14 +184,9 @@ export class Client {
             await console.log ("Ok I Waited 1 Minute, Continuing... ");
             await console.log (new Date());
             await this.delay(1000);
-            await console.log ("You Have " + this.getRatelimit().remaining + " Requests Remaining");
-            // THIS IS INCORRECT! DATA NEEDS TO BE RE-GOT
-            // IF DONE BY CALLING FOR EXAMPLE `getUser()` THIS WILL COST 1 API CALL
-            // WE CAN NOT BE USING AN API CALL TO GET RATE-LIMIT INFORMATION
         }
     }
 
-   
 //
 // USER SPECIFIC ENDPOINTS
 //
@@ -264,11 +287,11 @@ export class Client {
 
         return this.request(`users/${this.discogsUserName}/collection/value`);
     }
-    
+
 //
 // RELEASE ENDPOINTS
 //
-    
+
     public async getRelease(releaseId: string) {
         const timeout = await this.calculateRateLimitRemaining();
 
@@ -338,7 +361,7 @@ export class Client {
         return this.request(`artists/${ArtistId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
     }
 
-    
+
 //
 // LABEL ENDPOINTS
 //

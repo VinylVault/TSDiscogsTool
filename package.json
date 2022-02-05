@@ -1,7 +1,7 @@
 {
-  "name": "js_ts_discogs_api_v2_library",
+  "name": "@dexvinyl/js_ts_discogs_api_v2_library",
   "version": "0.0.1",
-  "description": "",
+  "description": "TS / JS Library for Discogs API v2 Access.",
   "main": "dist/index.js",
   "author": "Dex Vinyl <studio@thevinylvaultshow.co.uk>",
   "license": "MIT",
@@ -9,6 +9,9 @@
     "build": "tsc",
     "build:watch": "tsc -w"
   },
+  "keywords": [
+    "Discogs", "API", "Music", "Wiki", "Music Library"
+  ],
   "dependencies": {
     "debug": "^4.3.3",
     "dotenv": "^14.3.2",
