@@ -184,13 +184,8 @@ export class Client {
             await console.log ("Ok I Waited 1 Minute, Continuing... ");
             await console.log (new Date());
             await this.delay(1000);
-            await console.log ("You Have " + this.getRatelimit().remaining + " Requests Remaining");
-            // THIS IS INCORRECT! DATA NEEDS TO BE RE-GOT
-            // IF DONE BY CALLING FOR EXAMPLE `getUser()` THIS WILL COST 1 API CALL
-            // WE CAN NOT BE USING AN API CALL TO GET RATE-LIMIT INFORMATION
         }
     }
-
 
 //
 // USER SPECIFIC ENDPOINTS
