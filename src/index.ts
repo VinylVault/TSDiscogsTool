@@ -17,7 +17,7 @@ interface Ratelimit {
     used: number,
 }
 
-export class Client {
+export default class Client {
     private protocol = 'https';
     private host: string;
     private port: number;
@@ -105,7 +105,7 @@ export class Client {
         while (true) {
             try {
                 const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
-                    // method: 'post',
+                    method: 'get',
                     // body: JSON.stringify({}),
                     headers: requestHeaders,
                 });
@@ -157,7 +157,6 @@ export class Client {
     public async calculateRateLimitRemaining(){
         let rateRemaining = this.getRatelimit().remaining;
         let rateBarrier = 2;//this.getRatelimit().ratelimit/5;
-        let currentTime = new Date();
         console.log ("You Have " + rateRemaining + " Requests Remaining");
         if ( rateRemaining <= rateBarrier ){
             console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
@@ -179,7 +178,7 @@ export class Client {
     }
 
     public async getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         if (!pageNumber){
             pageNumber="1"
@@ -206,7 +205,7 @@ export class Client {
     }
 
     public async getUserWantlist(pageNumber:string, sort:string, sortOrder:string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         if (!pageNumber){
             pageNumber="1"
@@ -233,13 +232,13 @@ export class Client {
     }
 
     public async getUserFolders() {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`users/${this.discogsUserName}/collection/folders`);
     }
 
     public async getUserFolderContents(folder:string, pageNumber:string, sort:string, sortOrder:string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         if (!pageNumber){
             pageNumber="1"
@@ -266,7 +265,7 @@ export class Client {
     }
 
     public async getUserCollectionValue() {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`users/${this.discogsUserName}/collection/value`);
     }
@@ -276,37 +275,37 @@ export class Client {
 //
 
     public async getRelease(releaseId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`releases/${releaseId}`);
     }
 
     public async getReleaseUserRating(releaseId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`releases/${releaseId}/rating/${this.discogsUserName}`);
     }
 
     public async getReleaseCommunityRating(releaseId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`releases/${releaseId}/rating`);
     }
 
     public async getReleaseStats(releaseId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`releases/${releaseId}/stats`);
     }
 
     public async getMasterRelease(masterId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`masters/${masterId}`);
     }
 
     public async getMasterReleaseVersions(masterId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`masters/${masterId}/versions`); // takes parameters, needs adding
     }
@@ -316,13 +315,13 @@ export class Client {
 //
 
     public async getArtistDetails(ArtistId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`artists/${ArtistId}`);
     }
 
     public async getArtistReleases(ArtistId: string, pageNumber:string, sort:string, sortOrder:string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         if (!pageNumber){
             pageNumber="1"
@@ -350,13 +349,13 @@ export class Client {
 //
 
     public async getLabelDetails(LabelId: string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         return this.request(`labels/${LabelId}`);
     }
 
     public async getLabelReleases(LabelId: string, pageNumber:string, sort:string, sortOrder:string) {
-        const timeout = await this.calculateRateLimitRemaining();
+        await this.calculateRateLimitRemaining();
 
         if (!pageNumber){
             pageNumber="1"
@@ -381,4 +380,4 @@ export class Client {
     }
 
 }
-export default Client;
+// export default Client;

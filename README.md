@@ -116,4 +116,7 @@ MIT
 
 # Other Resources
 
-[Discogs API Documentation](http://www.discogs.com/developers/)
+[Discogs API Documentation](https://www.discogs.com/developers/)
+
+[DexVinyl on Twitch](https://twitch.tv/dexvinyl) - I live stream here most days writing code, it is where the development of this is being completed, as well as other projects.  
+Come ask me questions, and / or make suggestions in livechat to shape further development of this library and add-on modules.
