@@ -158,12 +158,15 @@ export default class Client {
         let rateRemaining = this.getRatelimit().remaining;
         let rateBarrier = 2;//this.getRatelimit().ratelimit/5;
         console.log ("You Have " + rateRemaining + " Requests Remaining");
-        if ( rateRemaining <= rateBarrier ){
-            console.log ("You've Used ALL You API Rate Allowance, Waiting for 1 Minute");
+        if (rateRemaining <= rateBarrier) {
+            console.log("Generating Random Wait Time");
+            const rngWaitTime = Math.floor(Math.random() * (55 - 15 + 1)) + 15;
+            console.log("You've Used ALL You API Rate Allowance, Waiting for "+ rngWaitTime +" Seconds");
             console.log ("The Threshold is " + rateBarrier + " Requests");
-            console.log (new Date());
-            await this.delay(60000);
-            console.log ("Ok I Waited 1 Minute, Continuing... ");
+            console.log(new Date());
+            let rngWaitTimeMS = rngWaitTime * 1000;
+            await this.delay(rngWaitTimeMS);
+            console.log ("Ok I Waited " +rngWaitTime+" Seconds, Continuing... ");
             console.log (new Date());
             await this.delay(1000);
         }
