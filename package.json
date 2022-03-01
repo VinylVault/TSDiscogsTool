@@ -10,7 +10,11 @@
     "build:watch": "tsc -w"
   },
   "keywords": [
-    "Discogs", "API", "Music", "Wiki", "Music Library"
+    "Discogs",
+    "API",
+    "Music",
+    "Wiki",
+    "Music Library"
   ],
   "dependencies": {
     "debug": "^4.3.3",

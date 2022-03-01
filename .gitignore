@@ -132,3 +132,8 @@ dist
 # Temp ignore
 test
 ./index.js
+
+# Image Folders
+images/artist
+images/recordlabel
+images/release
