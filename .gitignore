@@ -130,7 +130,6 @@ dist
 .pnp.*
 
 # Temp ignore
-test
 ./index.js
 
 # Image Folders
