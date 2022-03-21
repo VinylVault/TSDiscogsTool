@@ -1,3 +1,5 @@
 src
 test
 index.js
+.env
+.env.sample
