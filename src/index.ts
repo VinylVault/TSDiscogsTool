@@ -1,15 +1,12 @@
 import Dotenv from 'dotenv';
-import Debug from 'debug';
 import Fetch from 'node-fetch';
+import { info, debug, log } from './utils/debug';
 
 Dotenv.config();
 
-const debug = Debug('discogs:info');
-
-// console.info('Welcome To The Last Discogs API v2 Library You Will Ever Need')
-console.info('JS TS Discogs API v2 Library Version 0.0.1')
-console.info('© Dex Vinyl 2022')
-console.info('Released under MIT License')
+info('JS TS Discogs API v2 Library Version 0.0.1')
+info('© Dex Vinyl 2022')
+info('Released under MIT License')
 
 interface Ratelimit {
     ratelimit: number,
@@ -94,7 +91,7 @@ export default class Client {
         return authString || null;
     }
 
-    private async request(path: string) {
+    private async request(path: string, method: string = 'GET') {
         const requestHeaders: any = {
             'User-Agent': this.userAgent,
         };
@@ -105,7 +102,7 @@ export default class Client {
         while (true) {
             try {
                 const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
-                    method: 'get',
+                    method,
                     // body: JSON.stringify({}),
                     headers: requestHeaders,
                 });
@@ -121,13 +118,12 @@ export default class Client {
                     headers: responseHeaders,
                 };
             } catch (error) {
-                let theError = error;
-                console.error(theError);
+                console.error(error);
                 // @ts-ignore
                 if (theError.type == "invalid-json") {
                     console.log("Invalid JSON Received Waiting 5 Seconds Before Retry");
                     await this.delay(5000);
-                    console.log("Trying Again")
+                    debug("Trying Again")
                 }
             }
         }
@@ -139,7 +135,10 @@ export default class Client {
 
     // Helper Functions
     public async getRequest (path: string) {
-        return this.request(path);
+        return this.request(path, 'GET');
+    }
+    public async deleteRequest (path: string) {
+        return this.request(path, 'DELETE');
     }
 
 //
@@ -157,17 +156,17 @@ export default class Client {
     public async calculateRateLimitRemaining(){
         let rateRemaining = this.getRatelimit().remaining;
         let rateBarrier = 2;//this.getRatelimit().ratelimit/5;
-        console.log ("You Have " + rateRemaining + " Requests Remaining");
+        log ("You Have " + rateRemaining + " Requests Remaining");
         if (rateRemaining <= rateBarrier) {
-            console.log("Generating Random Wait Time");
+            log("Generating Random Wait Time");
             const rngWaitTime = Math.floor(Math.random() * (55 - 15 + 1)) + 15;
-            console.log("You've Used ALL You API Rate Allowance, Waiting for " + rngWaitTime + " Seconds");
-            console.log ("The Threshold is " + rateBarrier + " Requests");
-            console.log(new Date());
+            log("You've Used ALL You API Rate Allowance, Waiting for " + rngWaitTime + " Seconds");
+            log ("The Threshold is " + rateBarrier + " Requests");
+            log(new Date());
             let rngWaitTimeMS = rngWaitTime * 1000;
             await this.delay(rngWaitTimeMS);
-            console.log ("Ok I Waited " + rngWaitTime + " Seconds, Continuing... ");
-            console.log (new Date());
+            log ("Ok I Waited " + rngWaitTime + " Seconds, Continuing... ");
+            log (new Date());
             await this.delay(1000);
         }
     }
@@ -177,7 +176,11 @@ export default class Client {
 //
 
     public async getUser() {
-        return this.request(`users/${this.discogsUserName}`);
+        return this.getRequest(`users/${this.discogsUserName}`);
+    }
+
+    public async deleteUser() {
+        return this.deleteRequest(`users/${this.discogsUserName}`);
     }
 
     public async getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
@@ -204,7 +207,7 @@ export default class Client {
             sort = "added"
         }
 
-        return this.request(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
+        return this.getRequest(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
 
     public async getUserWantlist(pageNumber:string, sort:string, sortOrder:string) {
@@ -231,13 +234,13 @@ export default class Client {
             sort = "added"
         }
 
-        return this.request(`users/${this.discogsUserName}/wants?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
+        return this.getRequest(`users/${this.discogsUserName}/wants?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
 
     public async getUserFolders() {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`users/${this.discogsUserName}/collection/folders`);
+        return this.getRequest(`users/${this.discogsUserName}/collection/folders`);
     }
 
     public async getUserFolderContents(folder:string, pageNumber:string, sort:string, sortOrder:string) {
@@ -264,13 +267,13 @@ export default class Client {
             sort = "added"
         }
 
-        return this.request(`users/${this.discogsUserName}/collection/folders/${folder}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
+        return this.getRequest(`users/${this.discogsUserName}/collection/folders/${folder}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
 
     public async getUserCollectionValue() {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`users/${this.discogsUserName}/collection/value`);
+        return this.getRequest(`users/${this.discogsUserName}/collection/value`);
     }
 
 //
@@ -280,37 +283,37 @@ export default class Client {
     public async getRelease(releaseId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`releases/${releaseId}`);
+        return this.getRequest(`releases/${releaseId}`);
     }
 
     public async getReleaseUserRating(releaseId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`releases/${releaseId}/rating/${this.discogsUserName}`);
+        return this.getRequest(`releases/${releaseId}/rating/${this.discogsUserName}`);
     }
 
     public async getReleaseCommunityRating(releaseId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`releases/${releaseId}/rating`);
+        return this.getRequest(`releases/${releaseId}/rating`);
     }
 
     public async getReleaseStats(releaseId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`releases/${releaseId}/stats`);
+        return this.getRequest(`releases/${releaseId}/stats`);
     }
 
     public async getMasterRelease(masterId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`masters/${masterId}`);
+        return this.getRequest(`masters/${masterId}`);
     }
 
     public async getMasterReleaseVersions(masterId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`masters/${masterId}/versions`); // takes parameters, needs adding
+        return this.getRequest(`masters/${masterId}/versions`); // takes parameters, needs adding
     }
 
 //
@@ -320,7 +323,7 @@ export default class Client {
     public async getArtistDetails(ArtistId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`artists/${ArtistId}`);
+        return this.getRequest(`artists/${ArtistId}`);
     }
 
     public async getArtistReleases(ArtistId: string, pageNumber:string, sort:string, sortOrder:string) {
@@ -343,7 +346,7 @@ export default class Client {
             sort = "title"
         }
 
-        return this.request(`artists/${ArtistId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
+        return this.getRequest(`artists/${ArtistId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
     }
 
 
@@ -354,7 +357,7 @@ export default class Client {
     public async getLabelDetails(LabelId: string) {
         await this.calculateRateLimitRemaining();
 
-        return this.request(`labels/${LabelId}`);
+        return this.getRequest(`labels/${LabelId}`);
     }
 
     public async getLabelReleases(LabelId: string, pageNumber:string, sort:string, sortOrder:string) {
@@ -379,8 +382,7 @@ export default class Client {
             sort = "added"
         }
 
-        return this.request(`labels/${LabelId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
+        return this.getRequest(`labels/${LabelId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
     }
 
 }
-// export default Client;
