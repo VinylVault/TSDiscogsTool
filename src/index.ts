@@ -91,7 +91,7 @@ export default class Client {
         return authString || null;
     }
 
-    private async request(path: string, method: string = 'GET') {
+    private async request(path: string, method: string = 'GET', body?: any) {
         const requestHeaders: any = {
             'User-Agent': this.userAgent,
         };
@@ -101,11 +101,19 @@ export default class Client {
         }
         while (true) {
             try {
-                const response = await Fetch(`${this.protocol}://${this.host}/${path}`, {
+                const fetchObject: any = {
                     method,
-                    // body: JSON.stringify({}),
                     headers: requestHeaders,
-                });
+                }
+                if(body) {
+                    if(typeof body == 'object') {
+                        fetchObject.body = JSON.stringify(body)
+                        fetchObject.headers['Content-Type'] = 'application/json'
+                    } else {
+                        fetchObject.body = body
+                    }
+                }
+                const response = await Fetch(`${this.protocol}://${this.host}/${path}`, fetchObject);
                 const responseHeaders = response.headers;
                 const data = await response.json();
                 this.ratelimit = {
@@ -139,6 +147,9 @@ export default class Client {
     }
     public async deleteRequest (path: string) {
         return this.request(path, 'DELETE');
+    }
+    public async postRequest(path: string, body: any) {
+        return this.request(path, 'POST', body);
     }
 
 //
