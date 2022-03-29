@@ -129,7 +129,7 @@ export default class Client {
                 console.error(error);
                 // @ts-ignore
                 if (theError.type == "invalid-json") {
-                    console.log("Invalid JSON Received Waiting 5 Seconds Before Retry");
+                    log("Invalid JSON Received Waiting 5 Seconds Before Retry");
                     await this.delay(5000);
                     debug("Trying Again")
                 }
