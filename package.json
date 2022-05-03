@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "TS / JS Library for Discogs API v2 Access.",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VinylVault/TSDiscogsTool.git"
+  },
   "author": "Dex Vinyl <studio@thevinylvaultshow.co.uk>",
   "license": "MIT",
   "scripts": {
