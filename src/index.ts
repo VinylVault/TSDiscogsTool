@@ -4,7 +4,7 @@ import { info, debug, log } from './utils/debug';
 
 Dotenv.config();
 
-info('JS TS Discogs API v2 Library Version 0.0.1')
+info('JS TS Discogs API v2 Library Version 0.0.3')
 info('© Dex Vinyl 2022')
 info('Released under MIT License')
 
@@ -214,7 +214,7 @@ export default class Client {
         else if (sort == "year") {}
         else if (sort == "artist") {}
         else if (sort == "title") {}
-        else if (sort == "catno"){}
+        else if (sort == "catno") {}
         else if (sort == "format") {}
         else if (sort == "rating") {}
         else{
@@ -241,7 +241,7 @@ export default class Client {
         else if (sort == "year") {}
         else if (sort == "artist") {}
         else if (sort == "title") {}
-        else if (sort == "catno"){}
+        else if (sort == "catno") {}
         else if (sort == "format") {}
         else if (sort == "rating") {}
         else{
@@ -274,7 +274,7 @@ export default class Client {
         else if (sort == "year") {}
         else if (sort == "artist") {}
         else if (sort == "title") {}
-        else if (sort == "catno"){}
+        else if (sort == "catno") {}
         else if (sort == "format") {}
         else if (sort == "rating") {}
         else{
@@ -397,6 +397,66 @@ export default class Client {
         }
 
         return this.getRequest(`labels/${LabelId}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`); // takes parameters, needs adding
+    }
+
+//
+// SEARCH ENDPOINTS
+// 
+
+    public getSearch(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?q=${query}&page=${pageNumber}`);
+    }
+
+    public getSearchArtist(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?q=${query}&type=artist&page=${pageNumber}`);
+    }
+
+    public getSearchReleaseId(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?release_id=${query}&type=release&page=${pageNumber}`);
+    }
+
+    public getSearchCatalogueNumber(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?catno=${query}&type=release&page=${pageNumber}`);
+    }
+
+    public getSearchReleaseTitle(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?release_title=${query}&type=release&page=${pageNumber}`);
+    }
+
+    public getSearchTrackTitle(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?track=${query}&type=release&page=${pageNumber}`);
+    }
+
+    public getSearchLabelReleases(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?label=${query}&type=release&page=${pageNumber}`);
+    }
+
+    public getSearchLabel(query: string, pageNumber: string) {
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+        return this.request(`database/search?q=${query}&type=label&page=${pageNumber}`);
     }
 
 }

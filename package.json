@@ -1,6 +1,6 @@
 {
   "name": "js_ts_discogs_api_v2_library",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "TS / JS Library for Discogs API v2 Access.",
   "main": "dist/index.js",
   "repository": {

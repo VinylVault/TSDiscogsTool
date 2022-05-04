@@ -1,4 +1,4 @@
-# TS/JS Discogs APIv2 Library Version 0.0.2
+# TS/JS Discogs APIv2 Library Version 0.0.3
 
 Tool to talk to Discogs API V2
 
@@ -6,19 +6,32 @@ Currently, Only Supports Personal Access Key.
 
 # Installation
 
-Information to follow, once NPM has populated.
+This library is libraried on NPM, to install, execute the command :
+
+`npm i js_ts_discogs_api_v2_library`
+
+Add the following to your `.env` file (or create a new one)
+
+Exclude sections in []
+
+DISCOGS_API_TOKEN="" [This is Your Personal Access Token, get one here : https://www.discogs.com/settings/developers and click "Generate New Token", Paste the token here]
+DISCOGS_USER_NAME = "" [Your Discogs UserProfile Name]
+DISCOGS_CURRENCY_MARK = "" [Options are : USD GBP EUR CAD AUD JPY CHF MXN BRL NZD SEK ZAR - per Discogs API]
+DISCOGS_PER_PAGE=500 [In Testing 500 is the maximum successful, default is 50, change this to your desired number, 500 or less.]
 
 ## Roadmap
 
 v0.0.1 only support GET endpoints
 
-v0.0.2 adds Auto Rate-Limiting **Current Version**
+v0.0.2 adds Auto Rate-Limiting 
 
-v0.0.3 will add PUT, POST, DELETE endpoints.
+v0.0.3 adds Search capability **Current Version**
 
-v0.0.4 will add oAuth Support
+v0.0.4 will add PUT, POST, DELETE endpoints.
 
-v0.0.5 and later and further will add user suggestions, and further enhancements.
+v0.0.5 will add oAuth Support
+
+v0.0.6+ will add user suggestions, and further enhancements, including adding CSV Import.
 
 ### Additional Modules, Additional Functionality (Currently In Development)
 
@@ -28,11 +41,9 @@ Currently None
 
 **Currently In Development**:
 
-For Search, use `TSDiscogsTool-Search` (Requires this library) this is a separate library as it will (when 100% feature complete) add extra functionality than just simply searching.
+For A Personal DB Interface use `TSDiscogsTool-DBInterface` (Requires this library) this will create a user updatable `Prisma` which you can link to your database backend of choice, or `Supabase` (TBD) basic database schema, and makes all the Database API endpoints available.
 
 **Yet To Be Started**:
-
-For A Personal DB Interface use `TSDiscogsTool-DBInterface` (Requires this library and `Search`) this will create a user updatable `Prisma` basic database schema, which you can link to your database backend of choice, and makes all the Database API endpoints available.
 
 For Playlist creation use `TSDiscogsTool-Playlists` (Requires `TSDiscogsTool-DBInterface` et al) this will allow you to create custom playlists, for display on a website.
 
