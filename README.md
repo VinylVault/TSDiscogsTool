@@ -1,4 +1,4 @@
-# TS/JS Discogs APIv2 Library Version 0.0.1
+# TS/JS Discogs APIv2 Library Version 0.0.2
 
 Tool to talk to Discogs API V2
 
@@ -12,7 +12,7 @@ Information to follow, once NPM has populated.
 
 v0.0.1 only support GET endpoints
 
-v0.0.2 will add Auto Rate-Limiting 
+v0.0.2 adds Auto Rate-Limiting **Current Version**
 
 v0.0.3 will add PUT, POST, DELETE endpoints.
 
@@ -120,5 +120,5 @@ MIT
 
 [Discogs API Documentation](https://www.discogs.com/developers/)
 
-[DexVinyl on Twitch](https://twitch.tv/dexvinyl) - I live stream here most days writing code, it is where the development of this is being completed, as well as other projects.  
+[RichCodesWeb on Twitch](https://twitch.tv/RichCodesWeb) - I live stream here most days writing code, it is where the development of this is being completed, as well as other projects.  
 Come ask me questions, and / or make suggestions in livechat to shape further development of this library and add-on modules.
