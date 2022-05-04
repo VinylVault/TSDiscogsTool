@@ -151,6 +151,9 @@ export default class Client {
     public async postRequest(path: string, body: any) {
         return this.request(path, 'POST', body);
     }
+    public async putRequest(path: string, body: any) {
+        return this.request(path, 'PUT', body);
+    }
 
 //
 // HAVE A NAP

@@ -2,7 +2,7 @@
 
 Tool to talk to Discogs API V2
 
-Currently, Only Supports Personal Access Key, Key/Secret will be supported in 0.0.2 and oAuth2 in 0.0.3
+Currently, Only Supports Personal Access Key.
 
 # Installation
 
@@ -12,11 +12,13 @@ Information to follow, once NPM has populated.
 
 v0.0.1 only support GET endpoints
 
-v0.0.2 will support PUT, POST, DELETE endpoints and add Key:Secret
+v0.0.2 will add Auto Rate-Limiting 
 
-v0.0.3 will add oAuth Access and Auto Rate-Limiting based on specific user permissions.
+v0.0.3 will add PUT, POST, DELETE endpoints.
 
-v0.0.4 and further will add user suggestions, and further enhancements.
+v0.0.4 will add oAuth Support
+
+v0.0.5 and later and further will add user suggestions, and further enhancements.
 
 ### Additional Modules, Additional Functionality (Currently In Development)
 

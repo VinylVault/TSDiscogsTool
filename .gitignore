@@ -139,3 +139,5 @@ images/release
 
 # vscode
 .vscode
+/.vs
+/.idea
