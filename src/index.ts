@@ -4,7 +4,7 @@ import { info, debug, log } from './utils/debug';
 
 Dotenv.config();
 
-info('JS TS Discogs API v2 Library Version 0.0.3')
+info('JS TS Discogs API v2 Library Version 0.0.4a')
 info('© Dex Vinyl 2022')
 info('Released under MIT License')
 
@@ -46,14 +46,16 @@ export default class Client {
                     secret,
                     discogsUserName,
                 }: {
-        host?: string,
-        port?: number;
-        userAgent?: string;
-        token?: string,
-        key?: string,
-        secret?: string,
-        discogsUserName?: string,
-    }) {
+                    host?: string,
+                    port?: number;
+                    userAgent?: string;
+                    token?: string,
+                    key?: string,
+                    secret?: string,
+                    discogsUserName?: string,
+        }
+    )
+    {
         this.discogsUserName = process.env.DISCOGS_USER_NAME || this.defaults.discogsUserName;
         this.host = host || this.defaults.host;
         this.port = port || this.defaults.port;
@@ -68,14 +70,15 @@ export default class Client {
     }
 
     private createAuthString({
-                                 token,
-                                 key,
-                                 secret,
+                                token,
+                                key,
+                                secret,
                              }: {
-        token?: string,
-        key?: string,
-        secret?: string,
-    }) {
+                                token?: string,
+                                key?: string,
+                                secret?: string,
+                                })
+    {
         let authString;
 
         let discogsToken = token || process.env.DISCOGS_API_TOKEN
@@ -98,6 +101,7 @@ export default class Client {
 
         if (this.auth) {
             requestHeaders['Authorization'] = `Discogs ${this.auth}`
+            requestHeaders['Content-Type'] = `application/json`
         }
         while (true) {
             try {
@@ -106,14 +110,18 @@ export default class Client {
                     headers: requestHeaders,
                 }
                 if(body) {
-                    if(typeof body == 'object') {
-                        fetchObject.body = JSON.stringify(body)
-                        fetchObject.headers['Content-Type'] = 'application/json'
+                    if (typeof body == 'object') {
+                        fetchObject.body = JSON.stringify(body);
                     } else {
                         fetchObject.body = body
                     }
                 }
                 const response = await Fetch(`${this.protocol}://${this.host}/${path}`, fetchObject);
+                console.log("RESPONSE CODE: " + response.status);
+                const responseCode = String(response.status);
+                if (responseCode == "204") {
+                    process.exit(0);
+                }
                 const responseHeaders = response.headers;
                 const data = await response.json();
                 this.ratelimit = {
@@ -121,13 +129,14 @@ export default class Client {
                     remaining: Number(responseHeaders.get('x-discogs-ratelimit-remaining')),
                     used: Number(responseHeaders.get('x-discogs-ratelimit-used'))
                 }
+
                 return {
                     data,
                     headers: responseHeaders,
                 };
             } catch (error) {
                 console.error(error);
-                // @ts-ignore
+                const theError:any = error;
                 if (theError.type == "invalid-json") {
                     log("Invalid JSON Received Waiting 5 Seconds Before Retry");
                     await this.delay(5000);
@@ -148,11 +157,11 @@ export default class Client {
     public async deleteRequest (path: string) {
         return this.request(path, 'DELETE');
     }
-    public async postRequest(path: string, body: any) {
-        return this.request(path, 'POST', body);
+    public async postRequest(path: string, data: any) {
+        return this.request(path, 'POST', data);
     }
-    public async putRequest(path: string, body: any) {
-        return this.request(path, 'PUT', body);
+    public async putRequest(path: string, data:any) {
+        return this.request(path, 'PUT', data);
     }
 
 //
@@ -190,71 +199,66 @@ export default class Client {
 //
 
     public async getUser() {
+        await this.calculateRateLimitRemaining();
+
         return this.getRequest(`users/${this.discogsUserName}`);
     }
 
-    public async deleteUser() {
-        return this.deleteRequest(`users/${this.discogsUserName}`);
-    }
-
-    public async getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
+    public async editUser(name: string, homepage: string, location: string, profile: string, currency: string) {
         await this.calculateRateLimitRemaining();
 
-        if (!pageNumber){
-            pageNumber="1"
+        const userDetails = await this.getRequest(`users/${this.discogsUserName}`);
+        console.log(userDetails);
+
+        if (name == "") {
+            name = userDetails.data.name;
         }
 
-        if (!sortOrder){
-            sortOrder="desc"
+        if (homepage == "") {
+            homepage = userDetails.data.home_page;
         }
 
-        if (!sort) {
-            sort = "added"
-        }
-        else if (sort == "year") {}
-        else if (sort == "artist") {}
-        else if (sort == "title") {}
-        else if (sort == "catno") {}
-        else if (sort == "format") {}
-        else if (sort == "rating") {}
-        else{
-            sort = "added"
+        if (location == "") {
+            location = userDetails.data.location;
         }
 
-        return this.getRequest(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
+        if (profile == "") {
+            profile = userDetails.data.profile;
+        }
+
+        if (currency == "") {
+            currency = userDetails.data.curr_abbr;
+        }
+
+        return this.postRequest(`users/${this.discogsUserName}`, {name:name, home_page:homepage, location:location, profile:profile, curr_abbr:currency});
     }
 
-    public async getUserWantlist(pageNumber:string, sort:string, sortOrder:string) {
-        await this.calculateRateLimitRemaining();
-
-        if (!pageNumber){
-            pageNumber="1"
-        }
-
-        if (!sortOrder){
-            sortOrder="desc"
-        }
-
-        if (!sort) {
-            sort = "added"
-        }
-        else if (sort == "year") {}
-        else if (sort == "artist") {}
-        else if (sort == "title") {}
-        else if (sort == "catno") {}
-        else if (sort == "format") {}
-        else if (sort == "rating") {}
-        else{
-            sort = "added"
-        }
-
-        return this.getRequest(`users/${this.discogsUserName}/wants?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
-    }
+//
+// FOLDER ENDPOINTS
+//
 
     public async getUserFolders() {
         await this.calculateRateLimitRemaining();
 
         return this.getRequest(`users/${this.discogsUserName}/collection/folders`);
+    }
+
+    public async createUserFolder(name: string) {
+        await this.calculateRateLimitRemaining();
+    
+        return this.postRequest(`users/${this.discogsUserName}/collection/folders`, {name: name});
+    }
+
+    public async editUserFolder(folder: string, name: string) {
+        await this.calculateRateLimitRemaining();
+
+        return this.postRequest(`users/${this.discogsUserName}/collection/folders/${folder}`, { name: name });
+    }
+
+    public async deleteUserFolder(folderID: string) {
+        await this.calculateRateLimitRemaining();
+
+        return this.deleteRequest(`users/${this.discogsUserName}/collection/folders/${folderID}`);
     }
 
     public async getUserFolderContents(folder:string, pageNumber:string, sort:string, sortOrder:string) {
@@ -284,10 +288,144 @@ export default class Client {
         return this.getRequest(`users/${this.discogsUserName}/collection/folders/${folder}/releases?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
 
+    public async addReleaseToFolder(releaseId:string, folderId:string) {
+        await this.calculateRateLimitRemaining();
+
+        return this.postRequest(`users/${this.discogsUserName}/collection/folders/${folderId}/releases/${releaseId}`, {});
+    }
+
+    public async changeReleaseFolder(releaseId: string, folderId: string) {
+        await this.calculateRateLimitRemaining();
+
+        const getReleaseInfoFromCollection = await this.getRequest(`users/${this.discogsUserName}/collection/releases/${releaseId}`);
+
+        for (const collectionRelease of getReleaseInfoFromCollection.data.releases) {
+            return this.postRequest(`users/${this.discogsUserName}/collection/folders/${collectionRelease.folder_id}/releases/${releaseId}/instances/${collectionRelease.instance_id}`, { folder_id: folderId });
+        }
+    }
+
+    public async removeReleaseFromFolder(releaseId: string) {
+        // Resets the folder to 1 - Uncategorised
+
+        await this.calculateRateLimitRemaining();
+
+        const getReleaseInfoFromCollection = await this.getRequest(`users/${this.discogsUserName}/collection/releases/${releaseId}`);
+        console.log(getReleaseInfoFromCollection.data.releases);
+
+        for (const collectionRelease of getReleaseInfoFromCollection.data.releases) {
+            return this.postRequest(`users/${this.discogsUserName}/collection/folders/${collectionRelease.folder_id}/releases/${releaseId}/instances/${collectionRelease.instance_id}`, { folder_id: "1" });
+        }
+    }
+
+//
+// COLLECTION ENDPOINTS
+//
+
     public async getUserCollectionValue() {
         await this.calculateRateLimitRemaining();
 
         return this.getRequest(`users/${this.discogsUserName}/collection/value`);
+    }
+
+    public async listCustomFields() {
+        await this.calculateRateLimitRemaining();
+
+        return this.getRequest(`users/${this.discogsUserName}/collection/fields`);
+    }
+
+    public async editCustomFieldValue(releaseId:string, fieldId:string, value:string) {
+        await this.calculateRateLimitRemaining();
+
+        const getReleaseInfoFromCollection = await this.getRequest(`users/${this.discogsUserName}/collection/releases/${releaseId}`);
+
+        for (const collectionRelease of getReleaseInfoFromCollection.data.releases) {
+            return this.postRequest(`users/${this.discogsUserName}/collection/folders/${collectionRelease.folder_id}/releases/${releaseId}/instances/${collectionRelease.instance_id}/fields/${fieldId}`, {value: value} );
+        }
+    }
+
+    public async getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
+        await this.calculateRateLimitRemaining();
+
+        if (!pageNumber){
+            pageNumber="1"
+        }
+
+        if (!sortOrder){
+            sortOrder="desc"
+        }
+
+        if (!sort) {
+            sort = "added"
+        }
+        else if (sort == "year") {}
+        else if (sort == "artist") {}
+        else if (sort == "title") {}
+        else if (sort == "catno") {}
+        else if (sort == "format") {}
+        else if (sort == "rating") {}
+        else{
+            sort = "added"
+        }
+
+        return this.getRequest(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
+    }
+
+    public async addReleaseToCollection(releaseId: string) {
+        await this.calculateRateLimitRemaining();
+        const checkCollectionForRelease = await this.getRequest(`users/${this.discogsUserName}/collection/releases/${releaseId}`);
+        console.log(checkCollectionForRelease);
+        if (checkCollectionForRelease.data.releases.id) {
+            console.log("Release In Collection")
+            return {
+                data: checkCollectionForRelease.data,
+                headers: checkCollectionForRelease.headers,
+            }
+        } else {
+            return this.postRequest(`users/${this.discogsUserName}/collection/folders/1/releases/${releaseId}`, {});
+        }
+    }
+
+//
+// WANTLIST ENDPOINTS
+//
+
+    public async getUserWantlist(pageNumber: string, sort: string, sortOrder: string) {
+        await this.calculateRateLimitRemaining();
+
+        if (!pageNumber) {
+            pageNumber = "1"
+        }
+
+        if (!sortOrder) {
+            sortOrder = "desc"
+        }
+
+        if (!sort) {
+            sort = "added"
+        }
+        else if (sort == "year") { }
+        else if (sort == "artist") { }
+        else if (sort == "title") { }
+        else if (sort == "catno") { }
+        else if (sort == "format") { }
+        else if (sort == "rating") { }
+        else {
+            sort = "added"
+        }
+
+        return this.getRequest(`users/${this.discogsUserName}/wants?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
+    }
+
+    public async addToUserWantlist(releaseNumber: string) {
+
+        return this.putRequest(`users/${this.discogsUserName}/wants/${releaseNumber}`, {})
+
+    }
+
+    public async removeFromUserWantlist(releaseNumber: string) {
+
+        return this.deleteRequest(`users/${this.discogsUserName}/wants/${releaseNumber}`)
+
     }
 
 //
@@ -304,6 +442,18 @@ export default class Client {
         await this.calculateRateLimitRemaining();
 
         return this.getRequest(`releases/${releaseId}/rating/${this.discogsUserName}`);
+    }
+
+    public async setChangeReleaseUserRating(releaseId: string, rating: number){
+        await this.calculateRateLimitRemaining();
+
+        return this.putRequest(`releases/${releaseId}/rating/${this.discogsUserName}`,{rating:rating});
+    }
+
+    public async deleteReleaseUserRating(releaseId: string){
+        await this.calculateRateLimitRemaining();
+
+        return this.deleteRequest(`releases/${releaseId}/rating/${this.discogsUserName}`);
     }
 
     public async getReleaseCommunityRating(releaseId: string) {
