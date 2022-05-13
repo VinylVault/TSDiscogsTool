@@ -321,6 +321,34 @@ export default class Client {
 // COLLECTION ENDPOINTS
 //
 
+    public async getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
+        await this.calculateRateLimitRemaining();
+
+        if (!pageNumber){
+            pageNumber="1"
+        }
+
+        if (!sortOrder){
+            sortOrder="desc"
+        }
+
+        if (!sort) {
+            sort = "added"
+        }
+        else if (sort == "label") {}
+        else if (sort == "artist") {}
+        else if (sort == "title") {}
+        else if (sort == "catno") {}
+        else if (sort == "format") {}
+        else if (sort == "rating") {}
+        else if (sort == "year") {}
+        else{
+            sort = "added"
+        }
+
+        return this.getRequest(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
+    }
+
     public async getUserCollectionValue() {
         await this.calculateRateLimitRemaining();
 
@@ -341,33 +369,6 @@ export default class Client {
         for (const collectionRelease of getReleaseInfoFromCollection.data.releases) {
             return this.postRequest(`users/${this.discogsUserName}/collection/folders/${collectionRelease.folder_id}/releases/${releaseId}/instances/${collectionRelease.instance_id}/fields/${fieldId}`, {value: value} );
         }
-    }
-
-    public async getUserCollection(pageNumber:string, sort:string, sortOrder:string) {
-        await this.calculateRateLimitRemaining();
-
-        if (!pageNumber){
-            pageNumber="1"
-        }
-
-        if (!sortOrder){
-            sortOrder="desc"
-        }
-
-        if (!sort) {
-            sort = "added"
-        }
-        else if (sort == "year") {}
-        else if (sort == "artist") {}
-        else if (sort == "title") {}
-        else if (sort == "catno") {}
-        else if (sort == "format") {}
-        else if (sort == "rating") {}
-        else{
-            sort = "added"
-        }
-
-        return this.getRequest(`users/${this.discogsUserName}/collection?sort=${sort}&sort_order=${sortOrder}&per_page=${this.perPage}&page=${pageNumber}`);
     }
 
     public async addReleaseToCollection(releaseId: string) {

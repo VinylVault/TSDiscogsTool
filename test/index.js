@@ -14,7 +14,7 @@ const main = async () => {
     // const wantlist = await discogs.getUserWantlist();
     // const folders = await discogs.getUserFolders();
     // const folderContents = await discogs.getUserFolderContents("3784660", "2");
-    // const collectionValue = await discogs.getUserCollectionValue();
+    const collectionValue = await discogs.getUserCollectionValue();
 
     // FOLDER INFORMATION
 
@@ -25,7 +25,7 @@ const main = async () => {
     // RELEASE INFORMATION
 
     // const releaseDetails = await discogs.getRelease("249504"); //RICK-ROLL   829032
-    const releaseUserRating = await discogs.getReleaseUserRating("829032");
+    // const releaseUserRating = await discogs.getReleaseUserRating("829032");
 
     // const releaseCommunityRating = await discogs.getReleaseCommunityRating("829032");
     // const releaseStats = await discogs.getReleaseStats("249504");
@@ -49,9 +49,9 @@ const main = async () => {
     // console.log(collection.data);
     // console.log(wantlist.data);
     // console.log(folderContents.data);
-    // console.log(collectionValue.data);
+    console.log(collectionValue.data);
     // console.log(releaseDetails.data);
-    console.log(releaseUserRating.data);
+    // console.log(releaseUserRating.data);
     // console.log(releaseUserRating.headers);
     // console.log(releaseCommunityRating.data);
     // console.log(releaseStats.data);
