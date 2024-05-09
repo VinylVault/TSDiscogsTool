@@ -1,4 +1,4 @@
-# TS/JS Discogs APIv2 Library Version 0.0.5 
+# TS/JS Discogs APIv2 Library Version 0.0.5(1) 
 
 (Starting to add PUT, POST, DELETE endpoints, this will not see a formal release until all are complete)
 

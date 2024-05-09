@@ -6,7 +6,7 @@ import { info, debug, log } from './utils/debug';
 
 Dotenv.config();
 
-info('JS TS Discogs API v2 Library Version 0.0.5.1');
+info('JS TS Discogs API v2 Library Version 0.0.5(1)');
 info('© Dex Vinyl 2022 - 2024');
 info('Released under MIT License');
 
