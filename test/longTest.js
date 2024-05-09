@@ -29,29 +29,35 @@ const main = async () => {
     // console.log(collection.headers);
     // console.log(collection.data.releases);
     for (release of collection.data.releases) {
-      // console.log(release.folder.id);
-      // console.log(release.release_id);
-      // console.log(release.basic_information.master_id);
-      // console.log(release.date_added);
-      // console.log(release.basic_information.title);
+      console.log(release.folder.id);
+      console.log(release.release_id);
+      console.log(release.basic_information.master_id);
+      console.log(release.date_added);
+      console.log(release.basic_information.title);
       // if ("artists_sort" in release.basic_information) {
       //   console.log(release.basic_information.artists_sort);
       // } else {
       //   console.log("FALSE");
       // }
-      // console.log(release.basic_information.styles);
+      console.log(release.basic_information.styles);
       // console.log(release.basic_information.huge_thumb);
-      // console.log(release.basic_information.year);
+      console.log(release.basic_information.year);
 
-      console.log(release);
+      // console.log(release);
       for (artist of release.basic_information.artists) {
         const artistDetails = await discogs.getArtistDetails(artist.id);
-        console.log(artistDetails);
+        console.log("===== RELEASE ARTIST DETAILS =====")
+        // console.log(artistDetails);
+        console.log(artist.id)
+        console.log(artist.name)
       }
 
       for (label of release.basic_information.labels) {
         const labelDetails = await discogs.getLabelDetails(label.id);
-        console.log(labelDetails);
+        console.log("===== RELEASE LABEL DETAILS =====")
+        // console.log(labelDetails);
+        console.log(label.id)
+        console.log(label.name)
       }
 
       for (track of release.basic_information.tracklist) {

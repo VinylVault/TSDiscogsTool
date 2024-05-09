@@ -14,7 +14,7 @@ const main = async () => {
     // const wantlist = await discogs.getUserWantlist();
     // const folders = await discogs.getUserFolders();
     // const folderContents = await discogs.getUserFolderContents("3784660", "2");
-    const collectionValue = await discogs.getUserCollectionValue();
+    // const collectionValue = await discogs.getUserCollectionValue();
 
     // FOLDER INFORMATION
 
@@ -49,7 +49,7 @@ const main = async () => {
     // console.log(collection.data);
     // console.log(wantlist.data);
     // console.log(folderContents.data);
-    console.log(collectionValue.data);
+    // console.log(collectionValue.data);
     // console.log(releaseDetails.data);
     // console.log(releaseUserRating.data);
     // console.log(releaseUserRating.headers);
@@ -78,7 +78,7 @@ const main = async () => {
     // const changeReleaseFolder = await discogs.changeReleaseFolder("1773118", "4456646");
     // console.log(changeReleaseFolder);
 
-    // const removeReleaseFromFolder = await discogs.removeReleaseFromFolder("829032");
+    // const removeReleaseFromFolder = await discogs.removeReleaseFromFolder("23035481");
     // console.log(removeReleaseFromFolder);
 
     // const editUser = await discogs.editUser("" , "", "", "", "GBP");
@@ -95,7 +95,7 @@ const main = async () => {
     // console.log(addToWantlist.data);
     // console.log(addToWantlist.headers);
 
-    // const addReleaseToCollection = await discogs.removeFromUserCollection("16102732");
+    // const addReleaseToCollection = await discogs.removeFromUserCollection("23035481");
     // console.log(addReleaseToCollection.data);
     // console.log(addReleaseToCollection.headers);
 
